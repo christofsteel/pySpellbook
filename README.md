@@ -29,6 +29,6 @@ but those have serious drawbacks in terms of support for printed media css.
 ## How to add spells?
 Either by hand, or import a dataset available here:
 
-	* Pathfinder PRD (to be added)
-	* Pathfinder DPRD [German] (to be added)
-	* D&D 3.5 SRD (to be added)
+* Pathfinder PRD (to be added)
+* Pathfinder DPRD \[German\] (to be added)
+* D&D 3.5 SRD (to be added)
