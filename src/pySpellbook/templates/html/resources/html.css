@@ -1,0 +1,270 @@
+@font-face {
+	font-family: Bridgnorth;
+	src: url('./bridge.ttf') format('truetype'); /* Format für Gecko- und Webkit-Browser */
+}
+/*
+@font-face {
+	font-family: Text;
+	font-weight: bold;
+	src: url('./AlmendraSC-Bold.otf') format('opentype'); 
+	font-variant: small-caps;
+}
+
+@font-face {
+	font-family: Text;
+	font-style: italic;
+	font-weight: bold;
+	font-variant: small-caps;
+	src: url('./AlmendraSC-BoldItalic.otf') format('opentype'); 
+}
+
+@font-face {
+	font-family: Text;
+	font-style: italic;
+	font-variant: small-caps;
+	src: url('./AlmendraSC-Italic.otf') format('opentype');
+}
+
+@font-face {
+	font-family: Text;
+	font-weight: normal;
+	font-variant: small-caps;
+	src: url('./AlmendraSC-Regular.otf') format('opentype');
+}
+@font-face {
+	font-family: Text;
+	font-weight: bold;
+	src: url('./Almendra-Bold.otf') format('opentype'); /* Format für Gecko- und Webkit-Browser 
+}
+@font-face {
+	font-family: Text;
+	font-style: italic;
+	font-weight: bold;
+	src: url('./Almendra-BoldItalic.otf') format('opentype');
+}
+
+@font-face {
+	font-family: Text;
+	font-style: italic;
+	src: url('./Almendra-Italic.otf') format('opentype');
+}
+*/
+@font-face {
+	font-family: Text;
+	src: url('./humanistic.ttf') format('truetype');
+}
+
+@font-face {
+	font-family: Headline;
+	font-weight: bold;
+	src: url('./humanistic.ttf') format('truetype'); 
+	/*src: url('dum1.ttf') format('truetype');*/
+}
+
+@page {
+	size: A4;
+	margin-top: 3cm;
+	margin-bottom: 3cm;
+	margin-left: 2cm;
+	margin-right: 2cm;
+}
+
+@page :right{
+	@bottom-right{
+		content: counter(page);
+		font-family: Text;
+		padding-right: 0.5cm;
+		font-size: 14pt;
+	}
+	margin-left:3cm;
+}
+
+@page :left{
+	@bottom-left{
+		content: counter(page);
+		font-family: Text;
+		padding-left: 0.5cm;
+		font-size: 14pt;
+	}
+	margin-right:3cm;
+}
+
+@top-left{
+	content: "Foobar";
+}
+
+@page {
+	@top-right-corner {
+		content: url('ro.png');
+	}
+	@bottom-left-corner {
+		content: url('lu.png');
+	}
+	@bottom-right-corner {
+		content: url('ru.png');
+	}
+	@top-left-corner {
+		content: url('lo.png');
+	}
+}
+
+h1 {
+	margin-top: 5cm;
+	margin-bottom: 8cm;
+	font-size: 70pt;
+	font-family: Headline;
+	text-align: center;
+}
+h2 {
+	font-size: 40pt;
+	font-family: Headline;
+	text-align: center;
+}
+
+h2::before {
+	content: "By ";
+}
+
+#toc::before {
+	content: "Table of content";
+	font-size: 20pt;
+	font-weight: bold;
+	font-family: Headline;
+	margin-bottom: 1em;
+}
+
+#toc {
+	page-break-before: always;
+	page-break-after: always;
+	font-family: Text;
+}
+
+#toc ol {
+	padding-left: 0cm;
+}
+
+#toc li{
+	display: block;
+}
+
+#toc a{
+	color: black;
+	text-decoration: none;
+}
+
+#toc a::after{
+	content: leader(dotted) " " target-counter(attr(href, url), page);
+}
+
+.d20class:first-child {
+	counter-reset: page;
+}
+
+.d20class::before {
+	content: "Class: ";
+}
+
+.d20class {
+	font-size: 40pt;
+	font-family: Headline;
+	page-break-before: always;
+	page-break-after: always;
+	margin-top: 10cm;
+	text-align: center;
+}
+
+.level {
+	font-size: 30pt;
+	font-family: Headline;
+	text-align: center;
+}
+
+.spells{
+	column-count: 2;
+	column-gap: 1cm;
+	-moz-column-count: 2;
+	-moz-column-gap: 1cm;
+	page-break-after: always;
+}
+
+.spell {
+/*	width: 75%;
+	margin: auto auto; */
+	font-size: 12pt;
+	font-family: Text;
+}
+
+.spell .spell_name {
+	font-family: Headline;
+	font-size: 20pt;
+	text-align: center;
+	page-break-after: avoid;
+}
+
+.spell .spell_name::after{
+	content: url("./line2.png");
+	display: block;
+	margin: auto auto;
+}
+
+.spell .meta::after{
+	content: url("./line1.png");
+	text-align: center;
+	display: block;
+	margin: auto auto;
+}
+
+.spell .rulebook{
+	font-variant: small-caps;
+	font-size: 10pt;
+	float: left;
+}
+
+.spell .classlevel{
+	font-variant: small-caps;
+	font-size: 10pt;
+	float: right;
+}
+
+.spell .spell_text table {
+	font-size: 10pt;
+	margin: auto auto;
+	border-collapse: collapse;
+	text-align: left;
+}
+
+.spell .spell_text td, .spell .spell_text th {
+}
+
+.spell .spell_text {
+	text-align: justify;
+}
+.spell .spell_text p:first-child::first-letter {
+    font-size: 400%;
+    line-height: 50%;
+    font-weight: bold;
+    float: left;
+}
+
+.meta {
+	clear: both;
+}
+
+.meta table{
+	margin: 20px auto;
+	page-break-after: avoid;
+}
+
+.spell table .value {
+	text-align: left;
+}
+
+.spell table .label {
+	text-align: right;
+	font-weight: bold;
+}
+
+.spell table .label::after {
+	content: ":";
+}
+

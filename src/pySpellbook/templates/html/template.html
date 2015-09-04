@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" moznomarginboxes mozdisallowselectionprint>
+	<head>
+		<meta charset="utf-8" />
+		<title>{{ spellbook.title }}</title>
+		<link rel="stylesheet" type="text/css" href="resources/html.css"/>
+	</head>
+	<body>
+		<h1>{{ spellbook.title }}</h1>
+		<h2>{{ spellbook.author }}  </h2>
+		<div id="toc">
+			<ol>
+				{% for d20class, levels in spellbook.spells.items() %}
+					{% set d20class_loop = loop %}
+				<li><a href="#{{ d20class_loop.index }}">{{ d20class }}</a></li>
+				<ol>
+					{% for level, spells in levels.items() %}
+					{% set level_loop = loop %}
+					<li><a href="#{{ d20class_loop.index }}.{{ level_loop.index }}">Level {{ level }}</a></li>
+					<ol>
+					{% for spell in spells %}
+						<li><a href="#{{ d20class_loop.index }}.{{ level_loop.index }}.{{ loop.index }}">{{ spell.name }}</a></li>
+					{% endfor %}
+					</ol>
+					{% endfor %}
+				</ol>
+				{% endfor %}
+			</ol>
+		</div>
+		{% for d20class, levels in spellbook.spells.items() %}
+			{% set d20class_loop = loop %}
+		<h3 id="{{ d20class_loop.index }}" class="d20class" >{{ d20class }}</h3>
+			{% for level, spells in levels.items() %}
+			{% set level_loop = loop %}
+		<h4 id="{{ d20class_loop.index }}.{{ level_loop.index }}" class="level" >Level {{ level }}</h4>
+		<div class="spells">
+			{% for spell in spells %}
+			<div class="spell">
+				<h5 id="{{ d20class_loop.index }}.{{ level_loop.index }}.{{ loop.index }}" class="spell_name">{{ spell.name }}</h5>
+				<div class="rulebook">{{ spell.rulebook }}</div>
+				<div class="classlevel">{{ d20class }} {{ level }}</div>
+				<div class="meta">
+				<table>
+					{% if spell.verbal or spell.material or spell.somatic or spell.arcane_focus or spell.divine_focus or spell.xp_costs %}
+					<tr>
+						<td class="label">Components</td>
+						<td class="value">
+							{% if spell.verbal %} V {% endif %}
+							{% if spell.somatic %} S {% endif %}
+							{% if spell.material %} M {% endif %}
+							{% if spell.arcane_focus %} AF {% endif %}
+							{% if spell.divine_focus %} DF {% endif %}
+							{% if spell.xp_costs %} XP {% endif %}
+						</td>
+					</tr>
+					{% endif %}
+					{% if spell.cast_time %}
+					<tr>
+						<td class="label">Casting&nbsp;time</td>
+						<td class="value">{{ spell.cast_time }}</td>
+					</tr>
+					{% endif %}
+					{% if spell.spell_range %}
+					<tr>
+						<td class="label">Range</td>
+						<td class="value">{{ spell.spell_range }}</td>
+					</tr>
+					{% endif %}
+					{% if spell.area %}
+					<tr>
+						<td class="label">Area</td>
+						<td class="value">{{ spell.area }}</td>
+					</tr>
+					{% endif %}
+					{% if spell.target %}
+					<tr>
+						<td class="label">Target</td>
+						<td class="value">{{ spell.target }}</td>
+					</tr>
+					{% endif %}
+					{% if spell.duration %}
+					<tr>
+						<td class="label">Duration</td>
+						<td class="value">{{ spell.duration }}</td>
+					</tr>
+					{% endif %}
+					{% if spell.save %}
+					<tr>
+						<td class="label">Saving&nbsp;throw</td>
+						<td class="value">{{ spell.save }}</td>
+					</tr>
+					{% endif %}
+					{% if spell.spell_res %}
+					<tr>
+						<td class="label">Spell&nbsp;resistance</td>
+						<td class="value">{{ spell.spell_res }}</td>
+					</tr>
+					{% endif %}
+				</table>
+				</div>
+				<div class="spell_text">
+					{{ spell.text }}
+				</div>
+			</div>
+			{% endfor %}
+		</div>
+			{% endfor %}
+		{% endfor %}
+	</body>
+</html>
