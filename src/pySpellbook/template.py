@@ -1,12 +1,16 @@
 from jinja2 import Environment, PackageLoader
 from pkg_resources import resource_filename, resource_listdir
-from weasyprint import HTML
+weasy = False
+try:
+    from weasyprint import HTML
+except:
+    weasy = False
 import webbrowser
 import re
+import os
 import tempfile
 import shutil
 import traceback
-import os
 import subprocess
 
 
@@ -120,7 +124,8 @@ class HTMLGenerator:
         string = re.sub("</a[^>]*>", "</emph>", string);
         return string
 
-    def __init__(self, model, title="My Spellbook", author="Sir Castalot"):
+    def __init__(self, model, title="My Spellbook", author="Sir Castalot", parent=None):
+        self.parent = parent
         self.env = Environment(loader=PackageLoader('pySpellbook', 'templates'))
         self.template = self.env.get_template("html/template.html")
         self.spellbook = {}
@@ -157,8 +162,14 @@ class HTMLGenerator:
                 custom_command = config['custom'].replace("$INPUT", temphtml).replace("$OUTPUT", filename)
                 shutil.copy(custom_command)
             else:
-                html = HTML(filename=tmpname)
-                html.write_pdf(target=filename)
+                if weasy:
+                    html = HTML("file://%s" % tmpname)
+                    html.write_pdf(target=filename)
+                else:
+                    import pySpellbook.qtpdf
+                    printer = pySpellbook.qtpdf.Printer(self.parent)
+                    printer.load(tmpname)
+                    printer.print(filename)
 
 
 

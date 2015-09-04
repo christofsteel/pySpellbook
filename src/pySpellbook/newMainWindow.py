@@ -625,7 +625,7 @@ class SpellBookWindow(QtGui.QMainWindow):
             self.updateWindowName()
 
     def generateBook(self):
-        g = HTMLGenerator(self.model, self.spellBookName, self.spellBookAuthor)
+        g = HTMLGenerator(self.model, self.spellBookName, self.spellBookAuthor, parent=self)
         filename, filters = QtGui.QFileDialog.getSaveFileName()
         if filename:
             g.make_book(filename, self.config)
