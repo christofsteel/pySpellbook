@@ -17,6 +17,8 @@ via
 
 this will fetch all python dependencies and install the binary pySpellbook.
 
+For windows releases there is an installer in "Releases"
+
 pySpellbook uses Prince to render the pdf output. Unfortunately Prince  is
 not open source software, but free for personal use. To install prince 
 download it here (http://www.princexml.com/download/) and set the correct 
@@ -29,6 +31,6 @@ but those have serious drawbacks in terms of support for printed media css.
 ## How to add spells?
 Either by hand, or import a dataset available here:
 
-* Pathfinder PRD (to be added)
+* Pathfinder PRD [Download] (https://github.com/christofsteel/pySpellbook/releases/download/v0.7.1/pathfinder.json)
 * Pathfinder DPRD \[German\] (to be added)
 * D&D 3.5 SRD (to be added)
