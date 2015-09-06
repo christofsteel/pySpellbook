@@ -152,7 +152,7 @@ class HTMLGenerator:
             #for r in self.resourcelist:
             #    shutil.copy(r, os.path.join(tempdir,"resources"))
             if config['backend'] == 'prince':
-                os.system("%s %s -o %s" % (config['prince_path'], tmpname, filename))
+                os.system("\"%s\" %s -o %s" % (config['prince_path'], tmpname, filename))
             elif config['backend'] == 'HTML':
                 shutil.copy(os.path.join(tempdir, tmpname), filename)
                 webbrowser.open_new_tab("file:///%s" % filename)
