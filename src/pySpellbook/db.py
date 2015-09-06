@@ -216,7 +216,7 @@ class db:
                 "DF",
                 "XP",
                 "cast_time",
-                "spell_range",
+                "range",
                 "area",
                 "target",
                 "duration",
@@ -296,7 +296,7 @@ class db:
             spell.divine_focus = spell_dict['DF']
             spell.xp_costs = spell_dict['XP']
             spell.cast_time = spell_dict['cast_time']
-            spell.spell_range = spell_dict['spell_range']
+            spell.spell_range = spell_dict['range']
             spell.area = spell_dict['area']
             spell.target = spell_dict['target']
             spell.duration = spell_dict['duration']

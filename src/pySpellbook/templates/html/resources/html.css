@@ -1,50 +1,3 @@
-/*
-@font-face {
-	font-family: Text;
-	font-weight: bold;
-	src: url('./AlmendraSC-Bold.otf') format('opentype'); 
-	font-variant: small-caps;
-}
-
-@font-face {
-	font-family: Text;
-	font-style: italic;
-	font-weight: bold;
-	font-variant: small-caps;
-	src: url('./AlmendraSC-BoldItalic.otf') format('opentype'); 
-}
-
-@font-face {
-	font-family: Text;
-	font-style: italic;
-	font-variant: small-caps;
-	src: url('./AlmendraSC-Italic.otf') format('opentype');
-}
-
-@font-face {
-	font-family: Text;
-	font-weight: normal;
-	font-variant: small-caps;
-	src: url('./AlmendraSC-Regular.otf') format('opentype');
-}
-@font-face {
-	font-family: Text;
-	font-weight: bold;
-	src: url('./Almendra-Bold.otf') format('opentype'); /* Format für Gecko- und Webkit-Browser 
-}
-@font-face {
-	font-family: Text;
-	font-style: italic;
-	font-weight: bold;
-	src: url('./Almendra-BoldItalic.otf') format('opentype');
-}
-
-@font-face {
-	font-family: Text;
-	font-style: italic;
-	src: url('./Almendra-Italic.otf') format('opentype');
-}
-*/
 @font-face {
 	font-family: Text;
 	src: local('Humanistic'), url('./humanistic.ttf') format('truetype');
@@ -54,7 +7,6 @@
 	font-family: Headline;
 	font-weight: bold;
 	src: local('Humanistic'), url('./humanistic.ttf') format('truetype'); 
-	/*src: url('dum1.ttf') format('truetype');*/
 }
 
 @page {
@@ -79,17 +31,6 @@
 	}
 }
 
-/*
-@page :left{
-	@bottom-left{
-		content: counter(page);
-		font-family: Text;
-		padding-left: 0.5cm;
-		font-size: 14pt;
-	}
-	margin-right:3cm;
-}
-*/
 @page :right{
 	background: url('ecke3_.png') bottom right no-repeat;
 }

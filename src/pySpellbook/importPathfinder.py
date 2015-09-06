@@ -2,6 +2,7 @@ from pyquery import PyQuery as pq
 import re
 import sys
 import json
+import os
 
 def addStat(source, target, sourceName, targetName):
     if sourceName in source.keys():
@@ -106,6 +107,7 @@ def parseSpell(link, rulebook, name, id=None):
     sourceTargetDict = {
                         "Casting Time": "cast_time",
                         "Range": "range",
+                        "Area": "area",
                         "Target": "target",
                         "Duration": "duration",
                         "Spell Resistance": "spell_resistance",
@@ -141,34 +143,9 @@ def parseSpell(link, rulebook, name, id=None):
 
 
 
-"""
-index = pq(filename="/home/christoph/vcs/pySpellBook/pathfinder/paizo.com/pathfinderRPG/prd/indices/spells.html")
-spells = [(li.attr("class").split(" ")[-1][5:], li.find("a").text(), li.find("a").attr('href')) for li in index.find('#spell-index-wrapper ul li').items()]
-short2book = {classItem.find("input").attr("id")[:-9]: classItem.find("label").text() for classItem in index.find(".shortcut-bar").eq(1).find('span').items()}
-skip = False
-spells_list = []
-for spell in spells:
-    if spell[1] == "Planar Ally":
-        skip = False
-    #if spell[1] != "Longstrider, Greater":
-    #    skip = True
-    #else:
-    #    skip = False
-    if skip:
-        continue
-    if spell[1] == "Dimensional" or spell[1] == "Summon Monster Table" or spell[1] == "Summon Nature's Ally Table" or spell[1] == "Greater Command" or spell[1] == "Lesser Restoration":
-        continue
-    spell_link = spell[2].replace("'","\\'").replace(',','\,')
-    id = None
-    if '#' in spell_link:
-        spell_link, id = spell_link.split("#")
-    if spell_link == "/pathfinderRPG/prd/advancedClassGuide/spells/investigativeMind.html":
-        spell_link = "/pathfinderRPG/prd/advancedClassGuide/spells/investigateMind.html"
-    spells_list.append(parseSpell(base_url+spell_link, short2book[spell[0]], spell[1], id))
-"""
-#Now fix class/levels...
 spells_list=[]
-base_url="/home/christoph/vcs/pySpellBook/pathfinder/paizo.com"
+base_url=os.path.abspath(sys.argv[1])
+print(base_url)
 index = pq(filename=base_url+"/pathfinderRPG/prd/indices/spelllists.html")
 short2book = {classItem.find("input").attr("id")[:-9]: classItem.find("label").text() for classItem in index.find(".shortcut-bar").eq(0).find('span').items()}
 mapping_a = [(index.find("#%s" % a.attr("for")).attr("value"),a.text().replace("\xa0", " ")) for a in index.find(".shortcut-bar").eq(1).children().children('label').items()]
@@ -243,6 +220,6 @@ for spell in spells_list:
             print("ERROR: NO SCHOOL %s" % spell['name'])
             sys.exit(1)
 
-with open("pathfinder.json", 'w') as f:
+with open(sys.argv[2], 'w') as f:
     json.dump(sorted(spells_list, key=lambda spell: spell['name']), f)
 
