@@ -3,18 +3,19 @@
 	<head>
 		<meta charset="utf-8" />
 		<title>{{ spellbook.title }}</title>
-		<link rel="stylesheet" type="text/css" href="resources/html.css"/>
+		<link rel="stylesheet" type="text/css" href="{{template_path}}/resources/html.css"/>
 	</head>
 	<body>
+		<div id="ff-background"></div>
 		<h1>{{ spellbook.title }}</h1>
 		<h2>{{ spellbook.author }}  </h2>
 		<div id="toc">
 			<ol>
-				{% for d20class, levels in spellbook.spells.items() %}
+				{% for d20class, levels in spellbook.spells|dictsort %}
 					{% set d20class_loop = loop %}
 				<li><a href="#{{ d20class_loop.index }}">{{ d20class }}</a></li>
 				<ol>
-					{% for level, spells in levels.items() %}
+					{% for level, spells in levels|dictsort %}
 					{% set level_loop = loop %}
 					<li><a href="#{{ d20class_loop.index }}.{{ level_loop.index }}">Level {{ level }}</a></li>
 					<ol>
@@ -27,19 +28,38 @@
 				{% endfor %}
 			</ol>
 		</div>
-		{% for d20class, levels in spellbook.spells.items() %}
+		{% for d20class, levels in spellbook.spells|dictsort %}
 			{% set d20class_loop = loop %}
 		<h3 id="{{ d20class_loop.index }}" class="d20class" >{{ d20class }}</h3>
-			{% for level, spells in levels.items() %}
+			{% for level, spells in levels|dictsort %}
 			{% set level_loop = loop %}
 		<h4 id="{{ d20class_loop.index }}.{{ level_loop.index }}" class="level" >Level {{ level }}</h4>
 		<div class="spells">
 			{% for spell in spells %}
 			<div class="spell">
+				<div class="header">
 				<h5 id="{{ d20class_loop.index }}.{{ level_loop.index }}.{{ loop.index }}" class="spell_name">{{ spell.name }}</h5>
+				<div class="source">
 				<div class="rulebook">{{ spell.rulebook }}</div>
 				<div class="classlevel">{{ d20class }} {{ level }}</div>
+				</div>
 				<div class="meta">
+				<div class="school">{{ spell.school }}</div>
+				{% if spell.subschool %}<div class="subschool">{{ spell.subschool }}</div>{% endif %}
+				<div class="descriptors">{%- if spell.descriptors -%}
+				{%- for d in spell.descriptors -%}
+				{% if loop.first -%}
+				[
+				{%- endif -%}
+				{{d.name}}
+				{%- if loop.last -%}
+				]
+				{%- else -%}
+				,&nbsp;
+				{%- endif -%}
+				{%- endfor%}
+				{% endif %}
+				</div>
 				<table>
 					{% if spell.verbal or spell.material or spell.somatic or spell.arcane_focus or spell.divine_focus or spell.xp_costs %}
 					<tr>
@@ -97,6 +117,7 @@
 					</tr>
 					{% endif %}
 				</table>
+				</div>
 				</div>
 				<div class="spell_text">
 					{{ spell.text }}

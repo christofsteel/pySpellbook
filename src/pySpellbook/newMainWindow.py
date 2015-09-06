@@ -248,7 +248,10 @@ class SpellBookWindow(QtGui.QMainWindow):
         self.configExportAction = self.spellBookMenu.addAction("&Configure Export...")
         self.spellBookMenu.addSeparator()
         self.exportBookAction = QtGui.QAction("&Export Spellbook...", self)
+        self.exportBookAction.setShortcut(QtCore.Qt.CTRL + QtCore.Qt.Key_E)
         self.spellBookMenu.addAction(self.exportBookAction)
+        self.exportAsBookAction = QtGui.QAction("Export Spellbook &As...", self)
+        self.spellBookMenu.addAction(self.exportAsBookAction)
         #self.exportHtmlAction = QtGui.QAction("Export HTML...", self)
         #self.spellBookMenu.addAction(self.exportHtmlAction)
 
@@ -278,7 +281,8 @@ class SpellBookWindow(QtGui.QMainWindow):
         self.setAuthorAction.triggered.connect(self.setAuthor)
         self.setNameAction.triggered.connect(self.setName)
         #self.exportPdfAction.triggered.connect(self.generatePDF)
-        self.exportBookAction.triggered.connect(self.generateBook)
+        self.exportBookAction.triggered.connect(self.exportBook)
+        self.exportAsBookAction.triggered.connect(self.exportAsBook)
         self.addSpellAction.triggered.connect(self.showAddSpell)
         self.importDBAction.triggered.connect(self.importDB)
         self.configExportAction.triggered.connect(self.showConfig)
@@ -300,6 +304,7 @@ class SpellBookWindow(QtGui.QMainWindow):
         self.fillSubschools()
         self.fillDescriptors()
         self.filename = ""
+        self.pdffilename = ""
         self.spellBookName="New Spellbook"
         self.spellBookAuthor="Unknown Author"
         self.modified = False
@@ -624,11 +629,22 @@ class SpellBookWindow(QtGui.QMainWindow):
             self.filename = filename
             self.updateWindowName()
 
-    def generateBook(self):
-        g = HTMLGenerator(self.model, self.spellBookName, self.spellBookAuthor, parent=self)
+    def exportBook(self):
+        if self.pdffilename:
+            self.generateBook(self.pdffilename)
+        else:
+            self.exportAsBook()
+
+    def exportAsBook(self):
         filename, filters = QtGui.QFileDialog.getSaveFileName()
         if filename:
-            g.make_book(filename, self.config)
+            self.pdffilename = filename
+            self.exportBookAction.setText("Export Spellbook to %s" % os.path.basename(self.pdffilename))
+            self.generateBook(filename)
+
+    def generateBook(self, filename):
+        g = HTMLGenerator(self.model, self.spellBookName, self.spellBookAuthor, parent=self)
+        g.make_book(filename, self.config)
 
     def generatePDF(self):
         g = LatexGenerator('fancy', self.model)

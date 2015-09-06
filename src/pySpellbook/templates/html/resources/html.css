@@ -1,7 +1,3 @@
-@font-face {
-	font-family: Bridgnorth;
-	src: url('./bridge.ttf') format('truetype'); /* Format für Gecko- und Webkit-Browser */
-}
 /*
 @font-face {
 	font-family: Text;
@@ -51,13 +47,13 @@
 */
 @font-face {
 	font-family: Text;
-	src: url('./humanistic.ttf') format('truetype');
+	src: local('Humanistic'), url('./humanistic.ttf') format('truetype');
 }
 
 @font-face {
 	font-family: Headline;
 	font-weight: bold;
-	src: url('./humanistic.ttf') format('truetype'); 
+	src: local('Humanistic'), url('./humanistic.ttf') format('truetype'); 
 	/*src: url('dum1.ttf') format('truetype');*/
 }
 
@@ -69,16 +65,21 @@
 	margin-right: 2cm;
 }
 
-@page :right{
-	@bottom-right{
+@page :first{
+	@bottom-center {
+	}
+	background: none;
+}
+@page {
+	@bottom-center{
 		content: counter(page);
-		font-family: Text;
+		font-family: Text, Humanistic;
 		padding-right: 0.5cm;
 		font-size: 14pt;
 	}
-	margin-left:3cm;
 }
 
+/*
 @page :left{
 	@bottom-left{
 		content: counter(page);
@@ -88,37 +89,43 @@
 	}
 	margin-right:3cm;
 }
-
-@top-left{
-	content: "Foobar";
+*/
+@page :right{
+	background: url('ecke3_.png') bottom right no-repeat;
 }
 
-@page {
-	@top-right-corner {
-		content: url('ro.png');
-	}
-	@bottom-left-corner {
-		content: url('lu.png');
-	}
-	@bottom-right-corner {
-		content: url('ru.png');
-	}
-	@top-left-corner {
-		content: url('lo.png');
-	}
+@page :left{
+	background: url('ecke_.png') top left no-repeat;
+}
+
+.school{
+	display: inline;
+}
+.subschool{
+	display: inline;
+}
+.subschool::before{
+	content: "(";
+}
+.subschool::after{
+	content: ")";
+}
+.descriptors {
+	display:inline;
 }
 
 h1 {
 	margin-top: 5cm;
 	margin-bottom: 8cm;
 	font-size: 70pt;
-	font-family: Headline;
+	font-family: Headline, Humanistic;
 	text-align: center;
 }
 h2 {
 	font-size: 40pt;
-	font-family: Headline;
+	font-family: Headline, Humanistic;
 	text-align: center;
+	page-break-after:right;
 }
 
 h2::before {
@@ -126,21 +133,22 @@ h2::before {
 }
 
 #toc::before {
-	content: "Table of content";
+	content: "Table of contents";
 	font-size: 20pt;
 	font-weight: bold;
-	font-family: Headline;
+	font-family: Headline, Humanistic;
 	margin-bottom: 1em;
 }
 
 #toc {
+	counter-reset: page;
 	page-break-before: always;
 	page-break-after: always;
-	font-family: Text;
+	font-family: Text, Humanistic;
 }
 
 #toc ol {
-	padding-left: 0cm;
+	padding-left: 2cm;
 }
 
 #toc li{
@@ -166,7 +174,7 @@ h2::before {
 
 .d20class {
 	font-size: 40pt;
-	font-family: Headline;
+	font-family: Headline, Humanistic;
 	page-break-before: always;
 	page-break-after: always;
 	margin-top: 10cm;
@@ -175,30 +183,30 @@ h2::before {
 
 .level {
 	font-size: 30pt;
-	font-family: Headline;
+	font-family: Headline, Humanistic;
 	text-align: center;
 }
 
 .spells{
 	column-count: 2;
 	column-gap: 1cm;
+	column-fill: auto;
 	-moz-column-count: 2;
 	-moz-column-gap: 1cm;
 	page-break-after: always;
 }
 
 .spell {
-/*	width: 75%;
-	margin: auto auto; */
-	font-size: 12pt;
-	font-family: Text;
+	font-size: 11pt;
+	font-family: Text, Humanistic;
 }
 
 .spell .spell_name {
-	font-family: Headline;
+	font-family: Headline, Humanistic;
 	font-size: 20pt;
 	text-align: center;
 	page-break-after: avoid;
+	break-after:avoid;
 }
 
 .spell .spell_name::after{
@@ -216,18 +224,22 @@ h2::before {
 
 .spell .rulebook{
 	font-variant: small-caps;
-	font-size: 10pt;
+	font-size: 8pt;
 	float: left;
 }
 
 .spell .classlevel{
 	font-variant: small-caps;
-	font-size: 10pt;
+	font-size: 8pt;
 	float: right;
 }
 
+.spell .descriptors, .spell .school, .spell .subschool {
+	font-size: 8pt;
+}
+
 .spell .spell_text table {
-	font-size: 10pt;
+	font-size: 8pt;
 	margin: auto auto;
 	border-collapse: collapse;
 	text-align: left;
@@ -246,13 +258,24 @@ h2::before {
     float: left;
 }
 
-.meta {
+.spell .header{
+	page-break-inside: avoid;
+	page-break-after: avoid;
+	break-inside:avoid;
+	break-after:avoid;
+}
+.spell .meta {
 	clear: both;
 }
 
 .meta table{
 	margin: 20px auto;
 	page-break-after: avoid;
+}
+
+.spell .spell_text table{
+	page-break-inside: avoid;
+	break-inside: avoid;
 }
 
 .spell table .value {

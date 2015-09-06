@@ -1,6 +1,6 @@
 from jinja2 import Environment, PackageLoader
 from pkg_resources import resource_filename, resource_listdir
-weasy = False
+weasy = True
 try:
     from weasyprint import HTML
 except:
@@ -140,7 +140,7 @@ class HTMLGenerator:
                     spell.levelstr = "%s %s" % (d20class, level)
                     spell.text = HTMLGenerator.removeLinks(HTMLGenerator.sanitizeQuotes(spell.text))
         self.spellbook['spells'] = dict_spells
-        self.rendered = self.template.render(spellbook=self.spellbook)
+        self.rendered = self.template.render(spellbook=self.spellbook, template_path=self.tp_path)
 
     def make_book(self, filename, config):
         with tempfile.TemporaryDirectory(prefix="pySpellbook-") as tempdir:
@@ -148,14 +148,12 @@ class HTMLGenerator:
             temphtml.write(self.rendered)
             tmpname = temphtml.name
             temphtml.close()
-            os.mkdir(os.path.join(tempdir, "resources"))
-            for r in self.resourcelist:
-                shutil.copy(r, os.path.join(tempdir,"resources"))
+            #os.mkdir(os.path.join(tempdir, "resources"))
+            #for r in self.resourcelist:
+            #    shutil.copy(r, os.path.join(tempdir,"resources"))
             if config['backend'] == 'prince':
                 os.system("%s %s -o %s" % (config['prince_path'], tmpname, filename))
             elif config['backend'] == 'HTML':
-                target_dir = os.path.dirname(filename)
-                shutil.copytree(os.path.join(tempdir,"resources"), os.path.join(target_dir, "resources"))
                 shutil.copy(os.path.join(tempdir, tmpname), filename)
                 webbrowser.open_new_tab("file:///%s" % filename)
             elif config['backend'] == 'custom':
@@ -167,6 +165,7 @@ class HTMLGenerator:
                     html.write_pdf(target=filename)
                 else:
                     import pySpellbook.qtpdf
+                    os.chdir(tempdir)
                     printer = pySpellbook.qtpdf.Printer(self.parent)
                     printer.load(tmpname)
                     printer.print(filename)

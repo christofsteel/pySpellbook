@@ -1,4 +1,5 @@
 from PySide import QtWebKit, QtCore, QtGui
+import os
 
 class Printer(QtCore.QObject):
     def __init__(self, parent):
@@ -7,6 +8,7 @@ class Printer(QtCore.QObject):
     def load(self, url):
         print(url)
         self.url = url
+
 
     def print(self, filename):
         print(filename)
@@ -17,7 +19,10 @@ class Printer(QtCore.QObject):
         self.printer.setOutputFormat(QtGui.QPrinter.PdfFormat)
         self.printer.setOutputFileName(filename)
         self.page = QtWebKit.QWebPage(self.parent())
-        self.page.mainFrame().load(self.url)
+        self.page.mainFrame().load("file://%s" % self.url)
+        self.view = QtWebKit.QWebView()
+        self.view.setPage(self.page)
+        #self.view.show()
         self.page.mainFrame().loadFinished.connect(self.print_)
 
     def print_(self, ok):
