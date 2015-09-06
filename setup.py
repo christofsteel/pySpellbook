@@ -23,10 +23,10 @@ if sys.platform.startswith("win32"):
     build_exe_options = {}
     setup(
         name = "pySpellbook",
-        version = "0.7.1",
+        version = "0.7.2",
         packages = find_packages('src'),
         package_dir = {'':'src'},
-        scripts = ["src/pySpellbook-qt4"],
+        scripts = ["src/pySpellbook-qt4", "src/pySpellbook/importPathfinder.py"],
         package_data = {'pySpellbook':['templates/html/resources/*','templates/html/template.html']},
         entry_points={
             'console_scripts': [
@@ -45,9 +45,10 @@ else:
                         'appdirs']
     setup(
         name = "pySpellbook",
-        version = "0.7.1",
+        version = "0.7.2",
         packages = find_packages('src'),
         package_dir = {'':'src'},
+        scripts = ['src/pySpellbook/importPathfinder.py'],
         package_data = {'pySpellbook':['templates/html/resources/*','templates/html/template.html']},
         entry_points={
             'console_scripts': [
