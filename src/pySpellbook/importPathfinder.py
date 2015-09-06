@@ -9,6 +9,9 @@ def addStat(source, target, sourceName, targetName):
     else:
         target[targetName] = ""
 
+def stripLinks(string):
+    return re.sub("<a.*?>","",string).replace("</a>", "")
+
 def replace(string):
     return string.upper().replace(",","").replace(" ", "").replace("/", "").replace("-","").replace("'","")
 
@@ -71,9 +74,12 @@ def parseSpell(link, rulebook, name, id=None):
         items = block.find("b, strong").items()
         for item in items:
             label = item.text().strip()
-            value_match = re.match(".*?(<b>|<strong>)\s*(?:<a[^>]*>)?\s*%s\s*(?:</a>)?\s*(</b>|</strong>)(?::)?\s*(<span class=\"body-copy-indent-char\">|)?(?P<value>([^(]*\([^)]*\) \[[^;]*|[^(]*\([^)]*\)|[^;]*))" % label, block.html())
+            value_match = re.match(".*?(<b>|<strong>)\s*(?:<a[^>]*>)?\s*%s\s*(?:</a>)?\s*(</b>|</strong>)(?::)?\s*(<span class=\"body-copy-indent-char\">|)?(?P<value>([^(]*\([^)]*\) \[[^;]*|[^(]*\([^)]*\)|[^;]*))" % label, stripLinks(block.html()))
             value = value_match.group("value").strip()
             spell_[label] = value
+    # Fix Saves:
+    if "Saving Throw" in spell_.keys():
+        spell_["Saving Throw"] = re.sub("(<.*|;.*)","",spell_["Saving Throw"]).strip()
     if "School" in spell_.keys():
         school_match = re.search("(?P<school>[^ ]*)(?: \(\s*(?:<.*?>)?\s*(?P<subschool>[^)]*?)\s*(?:<.*?>)?\s*\))?(?: \[(?P<descriptors>[^\]]*)\])?",  spell_['School']);
         spell['school'] = school_match.group("school").lower().replace(":","").capitalize()
