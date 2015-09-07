@@ -1,10 +1,11 @@
-from jinja2 import Environment, PackageLoader
+from jinja2 import Environment, PackageLoader, Template
 from pkg_resources import resource_filename, resource_listdir
 weasy = True
 try:
     from weasyprint import HTML
 except:
     weasy = False
+import sys
 import webbrowser
 import re
 import os
@@ -13,6 +14,20 @@ import shutil
 import traceback
 import subprocess
 
+def find_data_file(filename):
+    if getattr(sys, 'frozen', False):
+        # The application is frozen
+        return os.path.join(os.path.dirname(sys.executable), filename)
+    else:
+        # The application is not frozen
+        # Change this bit to match where you store your data files:
+        return resource_filename(__name__, filename)
+def list_data_dir(filename):
+    if getattr(sys, 'frozen', False):
+        base_dir = find_data_file("templates/html/resources")
+        return os.listdir(base_dir)
+    else:
+        return resource_listdir(__name__,'templates/html/resources')
 
 class LatexGenerator:
 
@@ -126,13 +141,24 @@ class HTMLGenerator:
 
     def __init__(self, model, title="My Spellbook", author="Sir Castalot", parent=None):
         self.parent = parent
-        self.env = Environment(loader=PackageLoader('pySpellbook', 'templates'))
-        self.template = self.env.get_template("html/template.html")
+        self.template_filename = find_data_file("templates/html/template.html")
+        template_file = open(self.template_filename, "r")
+        self.template = Template(template_file.read())
+        template_file.close()
+        #if sys.platform.startswith("win32"):
+        #    self.template_filename = os.path.join(os.path.abspath(__file__), 'templates/html/template.html')
+        #    template_file = open(self.template_filename, "r")        
+        #    self.template = Template(template_file.read())
+        #    template_file.close()
+        #else:
+        #    self.template_filename = resource_filename(__name__, 'templates/html/template.html')
+        #    self.env = Environment(loader=PackageLoader('pySpellbook', 'templates'))        
+        #    self.template = self.env.get_template("html/template.html")
         self.spellbook = {}
         self.spellbook['title'] = title
         self.spellbook['author'] = author
-        self.tp_path = os.path.dirname(resource_filename(__name__, 'templates/html/template.html'))
-        self.resourcelist = [resource_filename(__name__, os.path.join("templates","html","resources",r)) for r in resource_listdir(__name__,'templates/html/resources')]
+        self.tp_path = os.path.dirname(self.template_filename)
+        self.resourcelist = [find_data_file(os.path.join("templates","html","resources",r)) for r in list_data_dir('templates/html/resources')]
         dict_spells = model.getCheckedSpells()
         for d20class, levels in dict_spells.items():
             for level, spells in levels.items():
@@ -142,7 +168,7 @@ class HTMLGenerator:
         self.spellbook['spells'] = dict_spells
         self.rendered = self.template.render(spellbook=self.spellbook, template_path=self.tp_path)
 
-    def make_book(self, filename, config):
+    def make_book(self, filename, config):        
         with tempfile.TemporaryDirectory(prefix="pySpellbook-") as tempdir:
             temphtml = tempfile.NamedTemporaryFile(dir=tempdir, delete=False, suffix=".html", mode="w")
             temphtml.write(self.rendered)

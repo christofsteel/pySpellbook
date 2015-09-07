@@ -19,8 +19,8 @@ if sys.platform.startswith("win32"):
                         'jinja2',
                         'pyquery',
                         'appdirs']
-    base = "Win32GUI"
-    build_exe_options = {}
+    base = "WIN32GUI"
+    build_exe_options = {"include_files": "src/pySpellbook/templates/"}
     setup(
         name = "pySpellbook",
         version = "0.7.2",
