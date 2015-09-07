@@ -11,9 +11,14 @@ extras = {
     'import': 'pyquery'
 }
 if sys.platform.startswith("win32"):
-    from cx_Freeze import setup, Executable
+    try:
+        from cx_Freeze import setup, Executable
+    except:
+        class Executable:
+            def __init__(self, p1, base):
+                pass
     base = "WIN32GUI"
-    build_exe_options = {"include_files": "src/pySpellbook/templates/"}
+    build_exe_options = {"include_files": "src/pySpellbook/templates/", 'include_msvcr': True}
     setup(
         name = "pySpellbook",
         version = "0.7.2",
