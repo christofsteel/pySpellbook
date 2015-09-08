@@ -42,6 +42,10 @@ class ConfigDialog(object):
                 self.intern_radio.setChecked(True)
 
 
+    def set_path(self):
+        filename, filters = QtGui.QFileDialog.getOpenFileName()
+        if filename:
+            self.prince_path_edit.setText(filename)
 
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
@@ -71,6 +75,7 @@ class ConfigDialog(object):
         self.formLayout.setWidget(3, QtGui.QFormLayout.FieldRole, self.prince_path_edit)
         self.prince_path_button = QtGui.QPushButton(self.widget)
         self.prince_path_button.setObjectName("prince_path_button")
+        self.prince_path_button.pressed.connect(self.set_path)
         self.formLayout.setWidget(4, QtGui.QFormLayout.FieldRole, self.prince_path_button)
         self.custom_radio = QtGui.QRadioButton(self.widget)
         self.custom_radio.setObjectName("custom_radio")
