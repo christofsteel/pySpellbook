@@ -285,6 +285,7 @@ class SpellBookWindow(QtGui.QMainWindow):
         self.exportAsBookAction.triggered.connect(self.exportAsBook)
         self.addSpellAction.triggered.connect(self.showAddSpell)
         self.importDBAction.triggered.connect(self.importDB)
+        self.exportDBAction.triggered.connect(self.exportDB)
         self.configExportAction.triggered.connect(self.showConfig)
 
         self.classFilter = ""
@@ -309,6 +310,49 @@ class SpellBookWindow(QtGui.QMainWindow):
         self.spellBookAuthor="Unknown Author"
         self.modified = False
         self.updateWindowName()
+
+    def exportDB(self):
+        def findSpell(stuple, s_list):
+            for spell in s_list:
+                if spell['name'] == stuple[0] and spell['system'] == stuple[1] and spell['rulebook'] == stuple[2]:
+                    return spell
+        filename, filters = QtGui.QFileDialog.getSaveFileName()
+        if filename:
+            with open(filename, 'w') as f:
+                spell_list = []
+                for d20class_i in [self.model.invisibleRootItem().child(i) for i in range(self.model.invisibleRootItem().rowCount())]:
+                    d20class_i.safeload()
+                    for level_i in [d20class_i.child(i) for i in range(d20class_i.rowCount())]:
+                        level_i.safeload()
+                        for spell in [level_i.child(i).spell for i in range(level_i.rowCount())]:
+                            spell_dict = findSpell((spell.name, spell.system_name, spell.rulebook_name), spell_list)
+                            if not spell_dict:
+                                spell_dict = {}
+                                spell_dict["name"] = spell.name
+                                spell_dict["rulebook"] = spell.rulebook_name
+                                spell_dict["system"] = spell.system_name
+                                spell_dict["classes"] = []
+                                spell_dict["descriptors"] = [d.name for d in spell.descriptors]
+                                spell_dict["school"] = spell.school_name
+                                spell_dict["subschool"] = spell.subschool_name
+                                spell_dict["verbal"] = spell.verbal
+                                spell_dict["somatic"] = spell.somatic
+                                spell_dict["material"] = spell.material
+                                spell_dict["AF"] = spell.arcane_focus
+                                spell_dict["DF"] = spell.divine_focus
+                                spell_dict["XP"] = spell.xp_costs
+                                spell_dict["cast_time"] = spell.cast_time
+                                spell_dict["range"] = spell.spell_range
+                                spell_dict["area"] = spell.area
+                                spell_dict["target"] = spell.target
+                                spell_dict["duration"] = spell.duration
+                                spell_dict["saving_throw"] = spell.save
+                                spell_dict["spell_resistance"] = spell.spell_res
+                                spell_dict["text"] = spell.text
+                                spell_list.append(spell_dict)
+                            spell_dict["classes"].append((d20class_i.d20class.name, level_i.level.level))
+                json.dump(spell_list, f)
+
 
     def importDB(self):
         filename, filters = QtGui.QFileDialog.getOpenFileName()
