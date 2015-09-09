@@ -46,7 +46,7 @@ setup(
     package_data = {'pySpellbook':['templates/html/resources/*','templates/html/template.html']},
     entry_points={
         'console_scripts': [
-            'pySpellbook = pySpellbook.qt:run_pyspellbook'
+            'pySpellbook = pySpellbook.qt:run_pyspellbook',
             'importPathfinder = pySpellbook.importPathfinder:main [import]'
         ]},
     install_requires = install_requires,
