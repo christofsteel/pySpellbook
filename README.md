@@ -37,16 +37,16 @@ Either by [hand] (https://github.com/christofsteel/pySpellbook/wiki/generateData
 
 ## Licenses
 The text of every license can be found under LICENSES.
-PySpellbook (c) 2015 Christoph Stahl is licensed under the Apache 2.0 license.
-The font "Humanitic" (c) 1998 by George Williams is licensed under the SIL Open Font License.
-Floral Decorations (http://www.freevector.com/floral-decoration-graphics/) (c) artshare.ru licensed under CC BY 3.0
-The "Pathfinder PRD" (c) 2002-2015 Paizo, Inc. is licensed under the Open Game License 1.0a.
+ * PySpellbook (c) 2015 Christoph Stahl is licensed under the Apache 2.0 license.
+ * The font "Humanitic" (c) 1998 by George Williams is licensed under the SIL Open Font License.
+ * Floral Decorations (http://www.freevector.com/floral-decoration-graphics/) (c) artshare.ru licensed under CC BY 3.0
+ * The "Pathfinder PRD" (c) 2002-2015 Paizo, Inc. is licensed under the Open Game License 1.0a.
 
 Since the windows binary builds also include the libraries used:
-Python 3.4 (c) 2001-2015 Python Software Foundation is licensed under the PSL License
-PySide and Qt (c) 2015 The Qt Company are licensed under the LGPL 2.1
-Appdirs (c) 2010 ActiveState Software Inc. is licensed under the MIT License
-SQLAlchemy (c) 2005-2015 the SQLAlchemy authors and contributors is licensed under the MIT License
-Jinja2 (c) 2009 by the Jinja Team is licensed under the BSD License
-Weasyprint (c) 2011-2014 by Simon Sapin and contributors is licensed under the BSD License
-PyQuery (C) 2008 - Olivier Lauzanne is licensed under the BSD License
+ * Python 3.4 (c) 2001-2015 Python Software Foundation is licensed under the PSL License
+ * PySide and Qt (c) 2015 The Qt Company are licensed under the LGPL 2.1
+ * Appdirs (c) 2010 ActiveState Software Inc. is licensed under the MIT License
+ * SQLAlchemy (c) 2005-2015 the SQLAlchemy authors and contributors is licensed under the MIT License
+ * Jinja2 (c) 2009 by the Jinja Team is licensed under the BSD License
+ * Weasyprint (c) 2011-2014 by Simon Sapin and contributors is licensed under the BSD License
+ * PyQuery (C) 2008 - Olivier Lauzanne is licensed under the BSD License
