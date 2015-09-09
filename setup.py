@@ -38,6 +38,21 @@ extras = {
 #else:
 setup(
     name = "pySpellbook",
+    author = "Christoph Stahl",
+    author_email = "christoph.stahl@uni-dortmund.de",
+    url = "https://github.com/christofsteel/pyspellbook",
+    description = "A PDF spellbook creation utility for d20 games in python",
+    license = "apache2",
+    platforms = ["posix", "win32", "win64"],
+    classifiers = [
+        'Development Status :: 4 - Beta',
+        'Intended Audience :: End Users/Desktop',
+        'License :: OSI Approved :: Apache Software License',
+        'Operating System :: Microsoft :: Windows',
+        'Operating System :: POSIX',
+        'Topic :: Games/Entertainment :: Role-Playing'
+
+    ],
     version = "0.7.2",
     packages = find_packages('src'),
     package_dir = {'':'src'},
