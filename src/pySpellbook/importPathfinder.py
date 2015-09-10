@@ -102,17 +102,17 @@ def parseSpell(link, rulebook, name, id=None):
             elif component == 'S':
                 spell['somatic'] = True
             elif component == 'AF':
-                spell['AF'] = True
+                spell['arcane_focus'] = True
             elif component == 'DF':
-                spell['DF'] = True
+                spell['divine_focus'] = True
     sourceTargetDict = {
                         "Casting Time": "cast_time",
                         "Range": "range",
                         "Area": "area",
                         "Target": "target",
                         "Duration": "duration",
-                        "Spell Resistance": "spell_resistance",
-                        "Saving Throw": "saving_throw"
+                        "Spell Resistance": "spell_res",
+                        "Saving Throw": "save"
                        }
     for s, t in sourceTargetDict.items():
         addStat(spell_, spell, s, t)

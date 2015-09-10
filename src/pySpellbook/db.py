@@ -212,16 +212,16 @@ class db:
                 "verbal",
                 "somatic",
                 "material",
-                "AF",
-                "DF",
-                "XP",
+                "arcane_focus",
+                "divone_focus",
+                "xp_costs",
                 "cast_time",
-                "range",
+                "spell_range",
                 "area",
                 "target",
                 "duration",
-                "saving_throw",
-                "spell_resistance",
+                "save",
+                "spell_res",
                 "short_text",
                 "text"]
         for key in keys:
@@ -292,16 +292,16 @@ class db:
             spell.verbal = spell_dict['verbal']
             spell.somatic = spell_dict['somatic']
             spell.material = spell_dict['material']
-            spell.arcane_focus = spell_dict['AF']
-            spell.divine_focus = spell_dict['DF']
-            spell.xp_costs = spell_dict['XP']
+            spell.arcane_focus = spell_dict['arcane_focus']
+            spell.divine_focus = spell_dict['divine_focus']
+            spell.xp_costs = spell_dict['xp_costs']
             spell.cast_time = spell_dict['cast_time']
-            spell.spell_range = spell_dict['range']
+            spell.spell_range = spell_dict['spell_range']
             spell.area = spell_dict['area']
             spell.target = spell_dict['target']
             spell.duration = spell_dict['duration']
-            spell.save = spell_dict['saving_throw']
-            spell.spell_res = spell_dict['spell_resistance']
+            spell.save = spell_dict['save']
+            spell.spell_res = spell_dict['spell_res']
             spell.text_short = spell_dict['short_text']
             if "material_text" in spell_dict:
                 spell_dict["text"] = "".join([spell_dict["text"], "<p><i>Material Component/Focus:</i> %s</p>" % spell_dict["material_text"]])
