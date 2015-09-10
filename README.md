@@ -38,6 +38,7 @@ Either by [hand] (https://github.com/christofsteel/pySpellbook/wiki/generateData
 ## Licenses
 The text of every license can be found under LICENSES.
  * PySpellbook (c) 2015 Christoph Stahl is licensed under the Apache 2.0 license.
+ * Feather and Quill from the PySpellbook icon (c) Adrian Park, from The Noun Project are licensed under CC BY 3.0 
  * The font "Humanitic" (c) 1998 by George Williams is licensed under the SIL Open Font License.
  * Floral Decorations (http://www.freevector.com/floral-decoration-graphics/) (c) artshare.ru licensed under CC BY 3.0
  * The "Pathfinder PRD" (c) 2002-2015 Paizo, Inc. is licensed under the Open Game License 1.0a.

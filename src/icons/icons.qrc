@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="icons">
+    <file>pySpellbook.png</file>
     <file>list-add.png</file>
     <file>office-book.png</file>
     <file>preferences-system.png</file>

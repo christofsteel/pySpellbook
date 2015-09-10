@@ -162,6 +162,7 @@ class SpellBookWindow(QtGui.QMainWindow):
 
         # Setting up the window
         self.setWindowTitle("PySpellbook")
+        self.setWindowIcon(QtGui.QIcon(":icons/pySpellbook.png"))
         self.cw = QtGui.QWidget()
         self.setCentralWidget(self.cw)
         self.cw.setLayout(QtGui.QVBoxLayout())
