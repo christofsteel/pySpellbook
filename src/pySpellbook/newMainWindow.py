@@ -3,6 +3,7 @@ from jinja2 import Template
 
 import os
 import json
+import pySpellbook.icons_rc
 from pySpellbook.qmodel import SpellModel, FilterModel
 from pySpellbook.template import LatexGenerator, HTMLGenerator
 from pySpellbook.addSpellWindow import AddSpellWindow
@@ -145,6 +146,7 @@ class SpellBookWindow(QtGui.QMainWindow):
 
     def __init__(self, db, configfile):
         super().__init__()
+        self.setUnifiedTitleAndToolBarOnMac(True)
         self.db = db
         self.configfile = configfile
         self.config = {}
@@ -164,7 +166,6 @@ class SpellBookWindow(QtGui.QMainWindow):
         self.setCentralWidget(self.cw)
         self.cw.setLayout(QtGui.QVBoxLayout())
         self.cw.layout().setContentsMargins(0,0,0,0)
-
         self.spellArea = QtGui.QWidget(self.cw)
         self.cw.layout().addWidget(self.spellArea)
         self.spellArea.setLayout(QtGui.QHBoxLayout())
@@ -205,7 +206,7 @@ class SpellBookWindow(QtGui.QMainWindow):
         self.setMenuBar(self.menuBar)
         self.filterSpellsEdit = QtGui.QLineEdit()
         self.filterSpellsEdit.setPlaceholderText("Search...")
-        self.menuBar.setCornerWidget(self.filterSpellsEdit)
+#        self.menuBar.setCornerWidget(self.filterSpellsEdit)
         self.fileMenu = self.menuBar.addMenu("&File")
         self.spellBookMenu = self.menuBar.addMenu("Spell&book")
         self.dbMenu = self.menuBar.addMenu("&Database")
@@ -215,25 +216,29 @@ class SpellBookWindow(QtGui.QMainWindow):
         self.filterSubschoolMenu = self.filterMenu.addMenu("Su&bschool")
         self.filterDescriptorMenu = self.filterMenu.addMenu("&Descriptor")
         self.newAction = QtGui.QAction("&New", self)
+        self.newAction.setIcon(QtGui.QIcon.fromTheme("document-new", QtGui.QIcon(":icons/document-new.png")))
         self.newAction.setShortcut(QtCore.Qt.CTRL + QtCore.Qt.Key_N)
         self.fileMenu.addAction(self.newAction)
         self.openAction = QtGui.QAction(self)
         self.openAction.setText("&Open...")
+        self.openAction.setIcon(QtGui.QIcon.fromTheme("document-open", QtGui.QIcon(":icons/document-open.png")))
         self.openAction.setShortcut(QtCore.Qt.CTRL + QtCore.Qt.Key_O)
         self.fileMenu.addAction(self.openAction)
         self.fileMenu.addSeparator()
         self.saveAction = QtGui.QAction(self)
         self.saveAction.setText("&Save...")
+        self.saveAction.setIcon(QtGui.QIcon.fromTheme("document-save", QtGui.QIcon(":icons/document-save.png")))
         self.saveAction.setShortcut(QtCore.Qt.CTRL + QtCore.Qt.Key_S)
         self.fileMenu.addAction(self.saveAction)
         self.saveasAction = QtGui.QAction(self)
+        self.saveasAction.setIcon(QtGui.QIcon.fromTheme("document-save-as", QtGui.QIcon(":icons/document-save-as.png")))
         self.saveasAction.setText("&Save As...")
         self.fileMenu.addAction(self.saveasAction)
         self.fileMenu.addSeparator()
         self.quitAction = QtGui.QAction(self)
+        self.quitAction.setIcon(QtGui.QIcon.fromTheme("application-exit", QtGui.QIcon(":icons/application-exit.png")))
         self.quitAction.setText("&Quit")
         self.quitAction.setShortcut(QtCore.Qt.CTRL + QtCore.Qt.Key_Q)
-        self.quitAction.setIcon(QtGui.QIcon.fromTheme("application-exit"))
         self.fileMenu.addAction(self.quitAction)
 
         self.setNameAction = QtGui.QAction("Set &Name...", self)
@@ -246,8 +251,10 @@ class SpellBookWindow(QtGui.QMainWindow):
         #self.selectTemplateAction = QtGui.QAction("Select &Template...", self)
         #self.spellBookMenu.addAction(self.selectTemplateAction)
         self.configExportAction = self.spellBookMenu.addAction("&Configure Export...")
+        self.configExportAction.setIcon(QtGui.QIcon.fromTheme("preferences-system", QtGui.QIcon(":icons/preferences-system.png")))
         self.spellBookMenu.addSeparator()
         self.exportBookAction = QtGui.QAction("&Export Spellbook...", self)
+        self.exportBookAction.setIcon(QtGui.QIcon.fromTheme("office-book", QtGui.QIcon(":icons/office-book.png")))
         self.exportBookAction.setShortcut(QtCore.Qt.CTRL + QtCore.Qt.Key_E)
         self.spellBookMenu.addAction(self.exportBookAction)
         self.exportAsBookAction = QtGui.QAction("Export Spellbook &As...", self)
@@ -256,6 +263,7 @@ class SpellBookWindow(QtGui.QMainWindow):
         #self.spellBookMenu.addAction(self.exportHtmlAction)
 
         self.addSpellAction = QtGui.QAction("&Add Spell...", self)
+        self.addSpellAction.setIcon(QtGui.QIcon.fromTheme("list-add", QtGui.QIcon(":icons/list-add.png")))
         self.dbMenu.addAction(self.addSpellAction)
         self.dbMenu.addSeparator()
         self.importDBAction = QtGui.QAction("&Import DB...", self)
@@ -287,6 +295,25 @@ class SpellBookWindow(QtGui.QMainWindow):
         self.importDBAction.triggered.connect(self.importDB)
         self.exportDBAction.triggered.connect(self.exportDB)
         self.configExportAction.triggered.connect(self.showConfig)
+
+        # Tooolbar
+        self.toolbar = self.addToolBar("")
+        self.toolbar.setFloatable(False)
+        self.toolbar.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
+        self.toolbar.addAction(self.newAction)
+        self.toolbar.addAction(self.openAction)
+        self.toolbar.addAction(self.saveAction)
+        self.toolbar.addSeparator()
+#        self.toolbar.addAction(self.setAuthorAction)
+#        self.toolbar.addAction(self.setNameAction)
+        self.toolbar.addAction(self.exportBookAction)
+        self.toolbar.addSeparator()
+        self.toolbar.addAction(self.addSpellAction)
+        self.emptyWidget = QtGui.QWidget()
+        self.emptyWidget.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
+        self.toolbar.addWidget(self.emptyWidget)
+        self.toolbar.addWidget(self.filterSpellsEdit)
+
 
         self.classFilter = ""
         self.searchText = ""
