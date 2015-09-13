@@ -69,7 +69,7 @@ class AddSpellWindow(object):
         self.duration_edit.setText(spell.duration)
         self.save_edit.setText(spell.save)
         self.spell_res_edit.setText(spell.spell_res)
-        self.text_text.setText(spell.text)
+        self.text_text.setPlainText(spell.text)
 
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")

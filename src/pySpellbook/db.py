@@ -213,10 +213,11 @@ class db:
                 "somatic",
                 "material",
                 "arcane_focus",
-                "divone_focus",
+                "divine_focus",
                 "xp_costs",
                 "cast_time",
                 "spell_range",
+                "effect",
                 "area",
                 "target",
                 "duration",
@@ -299,6 +300,7 @@ class db:
             spell.spell_range = spell_dict['spell_range']
             spell.area = spell_dict['area']
             spell.target = spell_dict['target']
+            spell.effect = spell_dict['effect']
             spell.duration = spell_dict['duration']
             spell.save = spell_dict['save']
             spell.spell_res = spell_dict['spell_res']

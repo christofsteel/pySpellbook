@@ -128,6 +128,7 @@ class Spell(Base):
     cast_time = Column(String)
     spell_range = Column(String)
     area = Column(String)
+    effect = Column(String)
     target = Column(String)
     duration = Column(String)
 

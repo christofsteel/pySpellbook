@@ -98,6 +98,12 @@
 						<td class="value">{{ spell.target }}</td>
 					</tr>
 					{% endif %}
+					{% if spell.effect %}
+					<tr>
+						<td class="label">Effect</td>
+						<td class="value">{{ spell.effect }}</td>
+					</tr>
+					{% endif %}
 					{% if spell.duration %}
 					<tr>
 						<td class="label">Duration</td>
