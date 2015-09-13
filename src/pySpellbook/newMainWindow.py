@@ -3,11 +3,13 @@ from jinja2 import Template
 
 import os
 import json
+import sys
 import pySpellbook.icons_rc
 from pySpellbook.qmodel import SpellModel, FilterModel
 from pySpellbook.template import LatexGenerator, HTMLGenerator
 from pySpellbook.addSpellWindow import AddSpellWindow
 from pySpellbook.config_window import ConfigDialog
+
 
 class SpellBookHandler:
     def getSelection(window):
@@ -152,6 +154,9 @@ class SpellBookWindow(QtGui.QMainWindow):
 
     def __init__(self, db, configfile):
         super().__init__()
+        # This will deactivate the unused warning in vim
+        if pySpellbook.icons_rc:
+            pass
         self.setUnifiedTitleAndToolBarOnMac(True)
         self.db = db
         self.configfile = configfile
@@ -183,9 +188,9 @@ class SpellBookWindow(QtGui.QMainWindow):
         self.d20classArea.setLayout(QtGui.QVBoxLayout())
         self.d20classArea.layout().setContentsMargins(0,0,0,0)
         self.d20classArea.layout().setSpacing(0)
-        self.d20filterEdit = QtGui.QLineEdit()
-        self.d20filterEdit.setPlaceholderText("Filter classes")
-        self.d20classArea.layout().addWidget(self.d20filterEdit)
+        #self.d20filterEdit = QtGui.QLineEdit()
+        #self.d20filterEdit.setPlaceholderText("Filter classes")
+        #self.d20classArea.layout().addWidget(self.d20filterEdit)
         self.d20classlist = QtGui.QListView(self.spellArea)
         self.d20classArea.layout().addWidget(self.d20classlist)
         self.d20classlist.setAlternatingRowColors(True)
@@ -204,16 +209,15 @@ class SpellBookWindow(QtGui.QMainWindow):
         self.spellAreaSplitter.setStretchFactor(2,0)
         self.spellAreaSplitter.setStretchFactor(3,1)
 
-        self.d20filterEdit.textChanged.connect(self.filterClasses)
+        #self.d20filterEdit.textChanged.connect(self.filterClasses)
         self.d20classlist.clicked.connect(self.showLevels)
         self.levellist.clicked.connect(self.showSpells)
 
         # Setting up menus
-        self.menuBar = QtGui.QMenuBar(self)
+        self.menuBar = QtGui.QMenuBar(self) if sys.platform != "darwin" else QtGui.QMenuBar()
         self.setMenuBar(self.menuBar)
         self.filterSpellsEdit = QtGui.QLineEdit()
         self.filterSpellsEdit.setPlaceholderText("Search...")
-#        self.menuBar.setCornerWidget(self.filterSpellsEdit)
         self.fileMenu = self.menuBar.addMenu("&File")
         self.spellBookMenu = self.menuBar.addMenu("Spell&book")
         self.dbMenu = self.menuBar.addMenu("&Database")
@@ -222,6 +226,8 @@ class SpellBookWindow(QtGui.QMainWindow):
         self.filterSchoolMenu = self.filterMenu.addMenu("&School")
         self.filterSubschoolMenu = self.filterMenu.addMenu("Su&bschool")
         self.filterDescriptorMenu = self.filterMenu.addMenu("&Descriptor")
+        self.filterSelectedAction = self.filterMenu.addAction("Show &only selected")
+        self.filterSelectedAction.setCheckable(True)
         self.newAction = QtGui.QAction("&New", self)
         self.newAction.setIcon(QtGui.QIcon.fromTheme("document-new", QtGui.QIcon(":icons/document-new.png")))
         self.newAction.setShortcut(QtCore.Qt.CTRL + QtCore.Qt.Key_N)
@@ -248,35 +254,35 @@ class SpellBookWindow(QtGui.QMainWindow):
         self.quitAction.setShortcut(QtCore.Qt.CTRL + QtCore.Qt.Key_Q)
         self.fileMenu.addAction(self.quitAction)
 
-        self.setNameAction = QtGui.QAction("Set &Name...", self)
+        self.setNameAction = QtGui.QAction("Set &title...", self)
         self.spellBookMenu.addAction(self.setNameAction)
-        self.setAuthorAction = QtGui.QAction("Set &Author...", self)
+        self.setAuthorAction = QtGui.QAction("Set &author...", self)
         self.spellBookMenu.addAction(self.setAuthorAction)
         #self.selectImageAction = QtGui.QAction("Select &Image...", self)
         #self.spellBookMenu.addAction(self.selectImageAction)
         self.spellBookMenu.addSeparator()
         #self.selectTemplateAction = QtGui.QAction("Select &Template...", self)
         #self.spellBookMenu.addAction(self.selectTemplateAction)
-        self.configExportAction = self.spellBookMenu.addAction("&Configure Export...")
+        self.configExportAction = self.spellBookMenu.addAction("&Configure export...")
         self.configExportAction.setIcon(QtGui.QIcon.fromTheme("preferences-system", QtGui.QIcon(":icons/preferences-system.png")))
         self.spellBookMenu.addSeparator()
-        self.exportBookAction = QtGui.QAction("&Export Spellbook...", self)
+        self.exportBookAction = QtGui.QAction("&Export to PDF...", self)
         self.exportBookAction.setIcon(QtGui.QIcon.fromTheme("office-book", QtGui.QIcon(":icons/office-book.png")))
         self.exportBookAction.setShortcut(QtCore.Qt.CTRL + QtCore.Qt.Key_E)
         self.spellBookMenu.addAction(self.exportBookAction)
-        self.exportAsBookAction = QtGui.QAction("Export Spellbook &As...", self)
+        self.exportAsBookAction = QtGui.QAction("Export to PDF &as...", self)
         self.spellBookMenu.addAction(self.exportAsBookAction)
-        #self.exportHtmlAction = QtGui.QAction("Export HTML...", self)
-        #self.spellBookMenu.addAction(self.exportHtmlAction)
 
-        self.addSpellAction = QtGui.QAction("&Add Spell...", self)
+        self.addSpellAction = QtGui.QAction("&Add spell...", self)
         self.addSpellAction.setIcon(QtGui.QIcon.fromTheme("list-add", QtGui.QIcon(":icons/list-add.png")))
         self.dbMenu.addAction(self.addSpellAction)
         self.dbMenu.addSeparator()
-        self.importDBAction = QtGui.QAction("&Import DB...", self)
+        self.importDBAction = QtGui.QAction("&Import dataset...", self)
         self.dbMenu.addAction(self.importDBAction)
-        self.exportDBAction = self.dbMenu.addAction("&Export DB...")
-        #self.dbMenu.addAction("Export Selection...")
+        self.exportDBAction = self.dbMenu.addAction("&Export dataset...")
+        self.exportSelectedDBAction = self.dbMenu.addAction("Export &selected dataset..")
+        self.dbMenu.addSeparator()
+        self.clearDBAction = self.dbMenu.addAction("Clear database")
 
         self.editSpellAction = QtGui.QAction("Edit...", self)
         self.deleteSpellAction = QtGui.QAction("Delete", self)
@@ -295,13 +301,16 @@ class SpellBookWindow(QtGui.QMainWindow):
         self.quitAction.triggered.connect(self.close)
         self.setAuthorAction.triggered.connect(self.setAuthor)
         self.setNameAction.triggered.connect(self.setName)
-        #self.exportPdfAction.triggered.connect(self.generatePDF)
         self.exportBookAction.triggered.connect(self.exportBook)
         self.exportAsBookAction.triggered.connect(self.exportAsBook)
         self.addSpellAction.triggered.connect(self.showAddSpell)
         self.importDBAction.triggered.connect(self.importDB)
         self.exportDBAction.triggered.connect(self.exportDB)
+        self.exportSelectedDBAction.triggered.connect(self.exportSelectedDB)
+        self.clearDBAction.triggered.connect(self.clearDB)
         self.configExportAction.triggered.connect(self.showConfig)
+
+        self.filterSelectedAction.toggled.connect(self.filterSelected)
 
         # Tooolbar
         self.toolbar = self.addToolBar("")
@@ -311,8 +320,6 @@ class SpellBookWindow(QtGui.QMainWindow):
         self.toolbar.addAction(self.openAction)
         self.toolbar.addAction(self.saveAction)
         self.toolbar.addSeparator()
-#        self.toolbar.addAction(self.setAuthorAction)
-#        self.toolbar.addAction(self.setNameAction)
         self.toolbar.addAction(self.exportBookAction)
         self.toolbar.addSeparator()
         self.toolbar.addAction(self.addSpellAction)
@@ -345,7 +352,11 @@ class SpellBookWindow(QtGui.QMainWindow):
         self.modified = False
         self.updateWindowName()
 
-    def exportDB(self):
+
+    def exportSelectedDB(self):
+        self.exportDB(True)
+
+    def exportDB(self, only_selected=False):
         def findSpell(stuple, s_list):
             for spell in s_list:
                 if spell['name'] == stuple[0] and spell['system'] == stuple[1] and spell['rulebook'] == stuple[2]:
@@ -358,7 +369,10 @@ class SpellBookWindow(QtGui.QMainWindow):
                     d20class_i.safeload()
                     for level_i in [d20class_i.child(i) for i in range(d20class_i.rowCount())]:
                         level_i.safeload()
-                        for spell in [level_i.child(i).spell for i in range(level_i.rowCount())]:
+                        for spell_i in [level_i.child(i) for i in range(level_i.rowCount())]:
+                            spell = spell_i.spell
+                            if only_selected and not spell_i.checkstate:
+                                continue
                             spell_dict = findSpell((spell.name, spell.system_name, spell.rulebook_name), spell_list)
                             if not spell_dict:
                                 spell_dict = {}
@@ -378,6 +392,7 @@ class SpellBookWindow(QtGui.QMainWindow):
                                 spell_dict["cast_time"] = spell.cast_time
                                 spell_dict["range"] = spell.spell_range
                                 spell_dict["area"] = spell.area
+                                spell_dict["effect"] = spell.effect
                                 spell_dict["target"] = spell.target
                                 spell_dict["duration"] = spell.duration
                                 spell_dict["saving_throw"] = spell.save
@@ -386,6 +401,15 @@ class SpellBookWindow(QtGui.QMainWindow):
                                 spell_list.append(spell_dict)
                             spell_dict["classes"].append((d20class_i.d20class.name, level_i.level.level))
                 json.dump(spell_list, f)
+
+
+    def clearDB(self):
+        ret = QtGui.QMessageBox().critical(self, "Are you sure", "This will delete all spells in your database close your spellbook without saving. Continue?", buttons=QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
+        if ret == QtGui.QMessageBox.Yes:
+            self.db.clear()
+            self.reloadModel()
+            self.modified = False
+            self.new()
 
 
     def importDB(self):
@@ -428,14 +452,22 @@ class SpellBookWindow(QtGui.QMainWindow):
             if ret == QtGui.QMessageBox.No:
                 self.spellBookName="New Spellbook"
                 self.spellBookAuthor="Unknown Author"
+                self.filename = None
+                self.pdffilename = None
+                self.exportBookAction.setText("&Export to PDF...")
                 self.updateWindowName()
                 self.model.clearChecked()
                 self.modified = False
+                self.spelllist.setHidden(True)
+                self.levellist.setHidden(True)
+                self.spelldetails.setText("")
             elif ret == QtGui.QMessageBox.Yes:
                 self.saveBook()
         else:
             self.spellBookName="New Spellbook"
             self.spellBookAuthor="Unknown Author"
+            self.filename = None
+            self.pdffilename = None
             self.updateWindowName()
             self.model.clearChecked()
 
@@ -446,14 +478,14 @@ class SpellBookWindow(QtGui.QMainWindow):
             self.setWindowTitle("PySpellbook - %s by %s (unsaved)" % (self.spellBookName, self.spellBookAuthor))
 
     def setName(self):
-        newName, ok = QtGui.QInputDialog.getText(self, "Set Name", "Name yout spellbook", text=self.spellBookName)
+        newName, ok = QtGui.QInputDialog.getText(self, "Set title", "Name your spellbook", text=self.spellBookName)
         if ok:
             self.spellBookName = newName
             self.updateWindowName()
             self.modified = True
 
     def setAuthor(self):
-        newAuthor, ok = QtGui.QInputDialog.getText(self, "Set Author", "Set the displayed authorname", text=self.spellBookAuthor)
+        newAuthor, ok = QtGui.QInputDialog.getText(self, "Set author", "Set the displayed authorname", text=self.spellBookAuthor)
         if ok:
             self.spellBookAuthor = newAuthor
             self.updateWindowName()
@@ -496,6 +528,7 @@ class SpellBookWindow(QtGui.QMainWindow):
 
     def connectModels(self):
         self.filtermodel.filterAdded.connect(self.refreshViews)
+        self.model.spellChecked.connect(self.refreshViews)
         self.d20classlist.setModel(self.filtermodel)
         self.levellist.setModel(self.filtermodel)
         self.spelllist.setModel(self.filtermodel)
@@ -614,6 +647,9 @@ class SpellBookWindow(QtGui.QMainWindow):
         self.classFilter = d20class
         self.filtermodel.setClassFilter(self.classFilter)
 
+    def filterSelected(self, checked):
+        self.filtermodel.setSelectedOnly(checked)
+
     def createDescriptorFilter(self, descriptor):
         def filter_descriptor(checked):
             if checked:
@@ -684,16 +720,35 @@ class SpellBookWindow(QtGui.QMainWindow):
                 json.dump(self.config, f, indent=2)
 
     def openBook(self):
-        filename, filters = QtGui.QFileDialog.getOpenFileName()
-        if filename:
-            SpellBookHandler.open(filename, self)
-            self.filename = filename
-            self.updateWindowName()
+        if self.isModified():
+            msgBox = QtGui.QMessageBox()
+            msgBox.setText("The spellbook has been modified.")
+            msgBox.setInformativeText("Do you want to save your changes?")
+            msgBox.setStandardButtons(QtGui.QMessageBox.Yes | QtGui.QMessageBox.No | QtGui.QMessageBox.Cancel)
+            msgBox.setDefaultButton(QtGui.QMessageBox.Yes)
+            ret = msgBox.exec_()
+
+            if ret == QtGui.QMessageBox.No:
+                filename, filters = QtGui.QFileDialog.getOpenFileName()
+                if filename:
+                    SpellBookHandler.open(filename, self)
+                    self.filename = filename
+                    self.updateWindowName()
+            elif ret == QtGui.QMessageBox.Yes:
+                self.saveBook()
+        else:
+            filename, filters = QtGui.QFileDialog.getOpenFileName()
+            if filename:
+                SpellBookHandler.open(filename, self)
+                self.modified = False
+                self.filename = filename
+                self.updateWindowName()
 
     def saveAsBook(self):
         filename, filters = QtGui.QFileDialog.getSaveFileName()
         if filename:
             SpellBookHandler.save(filename, self)
+            self.modified = False
             self.filename = filename
             self.updateWindowName()
 
@@ -704,6 +759,7 @@ class SpellBookWindow(QtGui.QMainWindow):
             filename, filters = QtGui.QFileDialog.getSaveFileName()
         if filename:
             SpellBookHandler.save(filename, self)
+            self.modified = False
             self.filename = filename
             self.updateWindowName()
 
@@ -717,7 +773,7 @@ class SpellBookWindow(QtGui.QMainWindow):
         filename, filters = QtGui.QFileDialog.getSaveFileName()
         if filename:
             self.pdffilename = filename
-            self.exportBookAction.setText("Export Spellbook to %s" % os.path.basename(self.pdffilename))
+            self.exportBookAction.setText("Export to %s" % os.path.basename(self.pdffilename))
             self.generateBook(filename)
 
     def generateBook(self, filename):

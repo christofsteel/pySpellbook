@@ -210,7 +210,62 @@ class PathfinderImporter(Importer):
                 else:
                     print("ERROR: NO SCHOOL %s" % spell['name'])
                     sys.exit(1)
+        self.fixBloodrager()
 
+    def fixBloodrager(self):
+        # The Bloodrager spelllist in SpellListIndexes seem way to short. These
+        # are manually copied from... and manually fixed:
+        # http://paizo.com/pathfinderRPG/prd/advancedClassGuide/classes/bloodrager.html
+        lvl1 = [self.normalize(s) for s in ["Blade lash", "blurred movement", "break", "burning hands", "cause fear", "chill touch", "color spray", "corrosive touch", "ear-piercing scream", "endure elements",
+                "enlarge person", "expeditious retreat", "feather fall", "flare burst", "frostbite", "hydraulic push", "icicle dagger", "jump", "line in the sand", "long arm", "mage armor",
+                "magic missile", "magic weapon", "marid's mastery", "mirror strike", "mount", "mudball", "phantom blood", "protection from chaos", "protection from evil", "protection from good",
+                "protection from law", "ray of enfeeblement", "ray of sickening", "reduce person", "returning weapon", "shadow weapon", "shield", "shock shield", "shocking grasp", "stone fist",
+                "stone shield", "strong wings", "sundering shards", "thunderstomp", "touch of combustion", "touch of gracelessness", "touch of the sea", "true strike", "unerring weapon", "warding weapon",
+                "wave shield", "web bolt", "windy escape", "winter feathers"]]
+        lvl2 = [self.normalize(s) for s in ["Ablative barrier", "acid arrow", "adhesive blood", "animal aspect", "bear's endurance", "blindness/deafness", "blood armor", "blood blaze", "boiling blood", "brow gasher",
+                "bullet shield", "bull's strength", "burning gaze", "cat's grace", "certain grip", "daze monster", "death from below", "defensive shock", "delay pain", "disfiguring touch",
+                "dust of twilight", "eagle's splendor", "elemental touch", "extreme flexibility", "false life", "fire breath", "flaming sphere", "frigid touch", "ghoul touch", "glitterdust",
+                "gust of wind", "gusting sphere", "imbue with elemental might", "mirror image", "molten orb", "protection from arrows", "pyrotechnics", "resist energy", "scorching ray",
+                "see invisibility", "shatter", "slipstream", "sonic scream", "spider climb", "steal breath", "stone call", "stone discus", "touch of idiocy", "unshakable chill"]]
+        lvl3 = [self.normalize(s) for s in ["Air geyser", "animal aspect, greater", "aqueous orb", "beast shape I", "blood biography", "blood scent", "burrow", "burst of speed", "chain of perdition", "cloak of winds",
+                "countless eyes", "draconic reservoir", "elemental aura", "eruptive pustules", "excruciating deformation", "fire trail", "fireball", "firestream", "flame arrow", "fly",
+                "force hook charge", "force punch", "gloomblind bolts", "haste", "heroism", "hold person", "hostile levitation", "howling agony", "hydraulic torrent", "keen edge",
+                "lightning bolt", "locate weakness", "magic weapon, greater", "monstrous physique I", "pain strike", "paragon surge", "phantom steed", "protection from energy", "rage",
+                "raging rubble", "ray of exhaustion", "resinous skin", "silver darts", "sleet storm", "slow", "stinking cloud", "thunderstomp, greater", "twilight knife", "undead anatomy I",
+                "vampiric touch", "versatile weapon", "vision of hell", "water breathing", "wind wall"]]
+        lvl4 = [self.normalize(s) for s in ["Absorbing inhalation", "ball lightning", "beast shape II", "bestow curse", "black tentacles", "calcific touch", "confusion", "contagion", "crushing despair", "detonate",
+                "dragon's breath", "earth glide", "elemental body I", "enervation", "enlarge person, mass", "false life, greater", "fear", "fire shield", "firefall", "flaming sphere, greater",
+                "ghost wolf", "hellmouth lash", "ice storm", "monstrous physique II", "moonstruck", "pellet blast", "phantasmal killer", "reduce person, mass", "ride the waves", "river of wind",
+                "shocking image", "shout", "slow", "stoneskin", "telekinetic charge", "touch of slime", "vermin shape I", "vitriolic mist", "volcanic storm", "wall of fire", "wall of ice",
+                "wall of sound", "wreath of blades"]]
+        for spell in self._spells:
+            if self.normalize(spell["name"]) in list(lvl1):
+                if not ("Bloodrager", 1) in spell["classes"]:
+                    spell["classes"].append(("Bloodrager", 1))
+                lvl1.remove(self.normalize(spell["name"]))
+        for spell in self._spells:
+            if self.normalize(spell["name"]) in list(lvl2):
+                if not ("Bloodrager", 2) in spell["classes"]:
+                    spell["classes"].append(("Bloodrager", 2))
+                lvl2.remove(self.normalize(spell["name"]))
+        for spell in self._spells:
+            if self.normalize(spell["name"]) in list(lvl3):
+                if not ("Bloodrager", 3) in spell["classes"]:
+                    spell["classes"].append(("Bloodrager", 3))
+                lvl3.remove(self.normalize(spell["name"]))
+        for spell in self._spells:
+            if self.normalize(spell["name"]) in list(lvl4):
+                if not ("Bloodrager", 4) in spell["classes"]:
+                    spell["classes"].append(("Bloodrager", 4))
+                lvl4.remove(self.normalize(spell["name"]))
+        if lvl1:
+            print(lvl1)
+        if lvl2:
+            print(lvl2)
+        if lvl3:
+            print(lvl3)
+        if lvl4:
+            print(lvl4)
 
 if __name__ == "__main__":
     PathfinderImporter(sys.argv[1]).save(sys.argv[2])

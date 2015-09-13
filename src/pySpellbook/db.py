@@ -5,10 +5,16 @@ from pySpellbook.models import create_engine, Base, Spell, Rulebook, School, Sub
 
 class db:
     def __init__(self, database, debug=False):
-        engine = create_engine("sqlite:///%s" % database, echo=debug)
-        Session = sessionmaker(bind=engine)
+        self.engine = create_engine("sqlite:///%s" % database, echo=debug)
+        Session = sessionmaker(bind=self.engine)
         self.session = Session()
-        Base.metadata.create_all(engine)
+        self.database = database
+        Base.metadata.create_all(self.engine)
+
+    def clear(self):
+        Base.metadata.drop_all(bind=self.engine)
+        Base.metadata.create_all(self.engine)
+
 
     def list_system_names(self):
         return self.session.query(Rulebook.system).distinct().all()

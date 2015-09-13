@@ -43,7 +43,7 @@ class ClassItem(QStandardItem):
         self.loaded = True
 
 class SpellModel(QStandardItemModel):
-
+    spellChecked = Signal()
     def spellItemFor(self, d20class_name, level_level, spell_name, rulebook_name, system_name, load=False):
         root = self.invisibleRootItem()
         nrClasses = root.rowCount()
@@ -200,6 +200,7 @@ class SpellModel(QStandardItemModel):
 
 
     def getCheckedSpells(self):
+        self.modified = False
         spells = {}
         root_index = self.indexFromItem(self.invisibleRootItem())
         d20classes_count = self.rowCount(root_index)
@@ -232,6 +233,7 @@ class SpellModel(QStandardItemModel):
         if role == Qt.CheckStateRole and type(item) == SpellItem:
             item.checkstate = value
             self.modified = True
+            self.spellChecked.emit()
             return True
 
 
@@ -244,8 +246,14 @@ class FilterModel(QSortFilterProxyModel):
         self.schoolFilter = []
         self.subschoolFilter = []
         self.descriptorFilter = []
+        self.selectedOnly = False
         self.classFilter = ""
         self.searchText = ""
+
+    def setSelectedOnly(self, option):
+        self.deep_filtered = True
+        self.selectedOnly = option
+        self.filterAdded.emit()
 
     def setSearchText(self, text):
         self.deep_filtered = True
@@ -287,6 +295,8 @@ class FilterModel(QSortFilterProxyModel):
                 return False
         if self.deep_filtered:
             if type(item) == SpellItem:
+                if self.selectedOnly and not item.checkstate:
+                    return False
                 if not self.searchText.upper() in item.spell.text.upper() and \
                         not self.searchText.upper() in item.spell.name.upper():
                     return False

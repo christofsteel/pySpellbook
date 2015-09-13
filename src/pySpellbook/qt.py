@@ -1,11 +1,13 @@
 import sys
 import os
+import signal
 from appdirs import AppDirs
 from PySide import QtGui
 from pySpellbook.db import db
 from pySpellbook.newMainWindow import SpellBookWindow
 
 def run_pyspellbook():
+    signal.signal(signal.SIGINT, signal.SIG_DFL)
     dirs = AppDirs("pySpellbook")
     configdir = dirs.user_config_dir
     datadir = dirs.user_data_dir
