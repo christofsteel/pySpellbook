@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=640">
+
+    <link rel="stylesheet" href="stylesheets/core.css" media="screen">
+    <link rel="stylesheet" href="stylesheets/mobile.css" media="handheld, only screen and (max-device-width:640px)">
+    <link rel="stylesheet" href="stylesheets/github-light.css">
+
+    <script type="text/javascript" src="javascripts/modernizr.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script type="text/javascript" src="javascripts/headsmart.min.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function () {
+        $('#main_content').headsmart()
+      })
+    </script>
+    <title>Pyspellbook by christofsteel</title>
+  </head>
+
+  <body>
+    <a id="forkme_banner" href="https://github.com/christofsteel/pySpellbook">View on GitHub</a>
+    <div class="shell">
+
+      <header>
+        <span class="ribbon-outer">
+          <span class="ribbon-inner">
+            <h1>Pyspellbook</h1>
+            <h2>A PDF spellbook creation utility for d20 games in python</h2>
+          </span>
+          <span class="left-tail"></span>
+          <span class="right-tail"></span>
+        </span>
+      </header>
+
+      <section id="downloads">
+        <span class="inner">
+          <a href="https://github.com/christofsteel/pySpellbook/zipball/master" class="zip"><em>download</em> .ZIP</a><a href="https://github.com/christofsteel/pySpellbook/tarball/master" class="tgz"><em>download</em> .TGZ</a>
+        </span>
+      </section>
+
+
+      <span class="banner-fix"></span>
+
+
+      <section id="main_content">
+        <h1>
+<a id="pyspellbook" class="anchor" href="#pyspellbook" aria-hidden="true"><span class="octicon octicon-link"></span></a>pySpellbook</h1>
+
+<p>A PDF spellbook creation utility in python</p>
+
+<h2>
+<a id="what-is-it" class="anchor" href="#what-is-it" aria-hidden="true"><span class="octicon octicon-link"></span></a>What is it?</h2>
+
+<p>Do you play in a d20 game and play a spellcaster? Chances are, that you 
+do not know all your spells and effects by heart. This software lets you 
+choose a selection of spells and generate a pdf version of the spellbook.</p>
+
+<p>In addition you can browse and filter your spell library by class, rulebook,
+school/subschool, descriptor and fulltextsearch.</p>
+
+<h2>
+<a id="how-to-install" class="anchor" href="#how-to-install" aria-hidden="true"><span class="octicon octicon-link"></span></a>How to install?</h2>
+
+<p>If you are on linux and have python 3 and pip installed, then install it
+via</p>
+
+<pre><code>pip install pySpellbook
+</code></pre>
+
+<p>this will fetch all python dependencies and install the binary pySpellbook.</p>
+
+<p>For windows releases there is an installer in "Releases"</p>
+
+<p>pySpellbook uses Prince to render the pdf output. Unfortunately Prince  is
+not open source software, but free for personal use. To install prince 
+download it here (<a href="http://www.princexml.com/download/">http://www.princexml.com/download/</a>) and set the correct 
+path in pySpellbooks "Config export..." dialog.</p>
+
+<p>If you do not want to use Prince, you can use an internal renderer or 
+print the intermediate html with your favourite browser (Firefox recommended),
+but those have serious drawbacks in terms of support for printed media css.</p>
+
+<h2>
+<a id="how-to-add-spells" class="anchor" href="#how-to-add-spells" aria-hidden="true"><span class="octicon octicon-link"></span></a>How to add spells?</h2>
+
+<p>Either by <a href="https://github.com/christofsteel/pySpellbook/wiki/generateDatasets">hand</a>, or import a dataset available here:</p>
+
+<ul>
+<li>Pathfinder PRD <a href="https://github.com/christofsteel/pySpellbook/releases/download/v0.7.2/pathfinder.json">Download</a>
+</li>
+<li>Pathfinder DPRD [German] (to be added)</li>
+<li>D&amp;D 3.5 SRD (to be added)</li>
+</ul>
+
+<h2>
+<a id="licenses" class="anchor" href="#licenses" aria-hidden="true"><span class="octicon octicon-link"></span></a>Licenses</h2>
+
+<p>The text of every license can be found under LICENSES.</p>
+
+<ul>
+<li>PySpellbook (c) 2015 Christoph Stahl is licensed under the Apache 2.0 license.</li>
+<li>The font "Humanitic" (c) 1998 by George Williams is licensed under the SIL Open Font License.</li>
+<li>Floral Decorations (<a href="http://www.freevector.com/floral-decoration-graphics/">http://www.freevector.com/floral-decoration-graphics/</a>) (c) artshare.ru licensed under CC BY 3.0</li>
+<li>The "Pathfinder PRD" (c) 2002-2015 Paizo, Inc. is licensed under the Open Game License 1.0a.</li>
+</ul>
+
+<p>Since the windows binary builds also include the libraries used:</p>
+
+<ul>
+<li>Python 3.4 (c) 2001-2015 Python Software Foundation is licensed under the PSL License</li>
+<li>PySide and Qt (c) 2015 The Qt Company are licensed under the LGPL 2.1</li>
+<li>Appdirs (c) 2010 ActiveState Software Inc. is licensed under the MIT License</li>
+<li>SQLAlchemy (c) 2005-2015 the SQLAlchemy authors and contributors is licensed under the MIT License</li>
+<li>Jinja2 (c) 2009 by the Jinja Team is licensed under the BSD License</li>
+<li>Weasyprint (c) 2011-2014 by Simon Sapin and contributors is licensed under the BSD License</li>
+<li>PyQuery (C) 2008 - Olivier Lauzanne is licensed under the BSD License</li>
+</ul>
+      </section>
+
+      <footer>
+        <span class="ribbon-outer">
+          <span class="ribbon-inner">
+            <p>this project by <a href="https://github.com/christofsteel">christofsteel</a> can be found on <a href="https://github.com/christofsteel/pySpellbook">GitHub</a></p>
+          </span>
+          <span class="left-tail"></span>
+          <span class="right-tail"></span>
+        </span>
+        <p>Generated with <a href="https://pages.github.com">GitHub Pages</a> using Merlot</p>
+        <span class="octocat"></span>
+      </footer>
+
+    </div>
+
+    
+  </body>
+</html>
