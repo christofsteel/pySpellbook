@@ -47,6 +47,8 @@ Either by [hand]
 import a dataset available here:
 
 -  Pathfinder PRD [Download]
-   (https://github.com/christofsteel/pySpellbook/releases/download/v0.7.2/pathfinder.json)
--  Pathfinder DPRD [German] (to be added)
+   (https://christofsteel.github.io/pySpellbook/datasets/pathfinder-20150914.json)
+-  Pathfinder DPRD [German] [Download]
+   (https://christofsteel.github.io/pySpellbook/datasets/pathfinderDE-20150914.json)
 -  D&D 3.5 SRD (to be added)
+

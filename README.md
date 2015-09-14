@@ -31,8 +31,8 @@ but those have serious drawbacks in terms of support for printed media css.
 ## How to add spells?
 Either by [hand] (https://github.com/christofsteel/pySpellbook/wiki/generateDatasets), or import a dataset available here:
 
-* Pathfinder PRD [Download] (https://github.com/christofsteel/pySpellbook/releases/download/v0.7.2/pathfinder.json)
-* Pathfinder DPRD \[German\] (to be added)
+* Pathfinder PRD [Download] (https://christofsteel.github.io/pySpellbook/datasets/pathfinder-20150914.json)
+* Pathfinder DPRD \[German\] [Download] (https://christofsteel.github.io/pySpellbook/datasets/pathfinderDE-20150914.json)
 * D&D 3.5 SRD (to be added)
 
 ## Licenses
