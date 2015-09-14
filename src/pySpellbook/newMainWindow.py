@@ -4,7 +4,7 @@ from jinja2 import Template
 import os
 import json
 import sys
-import pySpellbook.icons_rc
+import pySpellbook.bw_icons_rc as icons
 from pySpellbook.qmodel import SpellModel, FilterModel
 from pySpellbook.template import LatexGenerator, HTMLGenerator
 from pySpellbook.addSpellWindow import AddSpellWindow
@@ -155,7 +155,7 @@ class SpellBookWindow(QtGui.QMainWindow):
     def __init__(self, db, configfile):
         super().__init__()
         # This will deactivate the unused warning in vim
-        if pySpellbook.icons_rc:
+        if icons:
             pass
         self.setUnifiedTitleAndToolBarOnMac(True)
         self.db = db
