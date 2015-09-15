@@ -9,6 +9,7 @@ from pySpellbook.qmodel import SpellModel, FilterModel
 from pySpellbook.template import LatexGenerator, HTMLGenerator
 from pySpellbook.addSpellWindow import AddSpellWindow
 from pySpellbook.config_window import ConfigDialog
+from pySpellbook.firstRunWizard import Wizard
 
 
 class SpellBookHandler:
@@ -161,9 +162,11 @@ class SpellBookWindow(QtGui.QMainWindow):
         self.db = db
         self.configfile = configfile
         self.config = {}
+        self.firstRun = True
         if os.path.exists(self.configfile):
             with open(self.configfile) as f:
                 self.config = json.load(f)
+                self.firstRun = False
         else:
             self.config['backend'] = 'internal'
             self.config['custom'] = 'html2pdf $INPUT $OUTPUT'
@@ -195,7 +198,9 @@ class SpellBookWindow(QtGui.QMainWindow):
         self.d20classArea.layout().addWidget(self.d20classlist)
         self.d20classlist.setAlternatingRowColors(True)
         self.levellist = QtGui.QListView(self.spellArea)
+        self.levellist.setAlternatingRowColors(True)
         self.spelllist = QtGui.QListView(self.spellArea)
+        self.spelllist.setAlternatingRowColors(True)
         self.spelllist.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
         self.spelldetails = QtGui.QTextEdit()
         self.spelldetails.setReadOnly(True)
@@ -248,6 +253,8 @@ class SpellBookWindow(QtGui.QMainWindow):
         self.saveasAction.setText("&Save As...")
         self.fileMenu.addAction(self.saveasAction)
         self.fileMenu.addSeparator()
+        self.rerunWizardAction = self.fileMenu.addAction("Run Wizard")
+        self.fileMenu.addSeparator()
         self.quitAction = QtGui.QAction(self)
         self.quitAction.setIcon(QtGui.QIcon.fromTheme("application-exit", QtGui.QIcon(":icons/application-exit.png")))
         self.quitAction.setText("&Quit")
@@ -298,6 +305,7 @@ class SpellBookWindow(QtGui.QMainWindow):
         self.openAction.triggered.connect(self.openBook)
         self.saveAction.triggered.connect(self.saveBook)
         self.saveasAction.triggered.connect(self.saveAsBook)
+        self.rerunWizardAction.triggered.connect(self.rerunWizard)
         self.quitAction.triggered.connect(self.close)
         self.setAuthorAction.triggered.connect(self.setAuthor)
         self.setNameAction.triggered.connect(self.setName)
@@ -352,6 +360,13 @@ class SpellBookWindow(QtGui.QMainWindow):
         self.modified = False
         self.updateWindowName()
 
+        if self.firstRun:
+            wizard = Wizard(self, db)
+            wizard.exec_()
+
+    def rerunWizard(self):
+        wizard = Wizard(self, self.db)
+        wizard.exec_()
 
     def exportSelectedDB(self):
         self.exportDB(True)
