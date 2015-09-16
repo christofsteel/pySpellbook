@@ -135,10 +135,12 @@ class Wizard(QtGui.QWizard):
                     if filename.endswith("zip"):
                         zf = zipfile.ZipFile(os.path.join(tempdir, filename))
                         zf.extractall(datadir)
+                        zf.close()
                         self.parent().config["prince_path"] = os.path.join(datadir, filename.replace(".zip", ""), "bin/prince.exe")
                     else:
                         tf = tarfile.open(os.path.join(tempdir,filename))
                         tf.extractall(datadir)
+                        tf.close()
                         self.parent().config["prince_path"] = os.path.join(datadir, filename.replace(".tar.gz", ""), "lib/prince/bin/prince")
                     self.parent().config["backend"] = "prince"
                     QtGui.QMessageBox.information(parent, "Success","Successfully installed PrinceXML to %s." % datadir)
