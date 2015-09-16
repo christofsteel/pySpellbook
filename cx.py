@@ -16,7 +16,7 @@ import sys
 base = 'Win32GUI' if sys.platform=='win32' else None
 
 executables = [
-    Executable('src/pySpellbook-qt4', base=base, targetName = 'pySpellbook')
+    Executable('src/pySpellbook-qt4', base=base, targetName = 'pySpellbook.exe' if sys.platform == "win32" else "pySpellbook")
 ]
 
 setup(name='pySpellbook',
