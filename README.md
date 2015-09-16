@@ -41,6 +41,7 @@ The text of every license can be found under LICENSES.
  * Feather and Quill from the PySpellbook icon (c) Adrian Park, from The Noun Project are licensed under CC BY 3.0 
  * The font "Humanitic" (c) 1998 by George Williams is licensed under the SIL Open Font License.
  * Floral Decorations (http://www.freevector.com/floral-decoration-graphics/) (c) artshare.ru licensed under CC BY 3.0
+ * Free Vector Ornaments (c) http://www.vectorian.net with permission to use without limitations
  * The "Pathfinder PRD" (c) 2002-2015 Paizo, Inc. is licensed under the Open Game License 1.0a.
 
 Since the windows binary builds also include the libraries used:
