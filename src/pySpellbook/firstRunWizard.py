@@ -168,6 +168,7 @@ class Wizard(QtGui.QWizard):
         page.setSubTitle("Please download a copy of PrinceXML")
 
         label1 = QtGui.QLabel("<p>Unfortunately PrinceXML is not free software, but it is free for personal usage.</p> <p>Installing PrinceXML is not required, but recommended. </p> <p>By downloading you agree to the <a href=\"http://www.princexml.com/license/\">license agreement</a> of PrinceXML (<a href=\"http://www.princexml.com\">www.princexml.com</a>)</p>")
+        label1.setOpenExternalLinks(True)
         label1.setWordWrap(True)
         button = QtGui.QPushButton("Download")
         label = QtGui.QLabel("")
@@ -187,11 +188,6 @@ class Wizard(QtGui.QWizard):
     def createDatasetPage(self):
 
         page = QtGui.QWizardPage()
-        def warn():
-            if not self.parent().db.count_spells():
-                QtGui.QMessageBox.information(page, "Datasets","You can always download Datasets manually from <a href=\"https://christofsteel.github.io/pySpellbook/\">https://christofstel.github.io/pySpellbook</a> and add them through \"Datasets > Import Dataset\", or add spells manually for your homebrew campaign.")
-            return True
-        page.validatePage = warn
         page.setTitle("PySpellbook")
         page.setSubTitle("Select datasets to be downloaded")
         ds_list = QtGui.QListWidget()
@@ -233,20 +229,27 @@ class Wizard(QtGui.QWizard):
             for row in range(ds_list.model().rowCount()):
                 item = ds_list.item(row)
                 if item.checkState():
-                    dl = DownloadWithProgress(self, "http://christofsteel.github.io/pySpellbook/datasets/%s" % item.text(), None, finished, None, None, "Downloading %s" % item.text())
-                    dl.download()
+                    #dl = DownloadWithProgress(self, "http://christofsteel.github.io/pySpellbook/datasets/%s" % item.text(), None, finished, None, None, "Downloading %s" % item.text())
+                    #dl.download()
+                    try:
+                        data = urllib.request.urlopen("http://christofsteel.github.io/pySpellbook/datasets/%s" % item.text())
+                        finished(data.readall().decode("utf-8"))
+                    except urllib.error.URLError:
+                        QtGui.QMessageBox.critical(page, "Network Error","An error occured downloading %s." % item.text())
+                        return False
+            if not self.parent().db.count_spells():
+                QtGui.QMessageBox.information(page, "Datasets","You can always download Datasets manually from <a href=\"https://christofsteel.github.io/pySpellbook/\">https://christofstel.github.io/pySpellbook</a> and add them through \"Datasets > Import Dataset\", or add spells manually for your homebrew campaign.")
+            return True
 
+        page.validatePage = download_datasets
         page.initializePage = download_current
         button = QtGui.QPushButton("Reload")
         button.clicked.connect(download_current)
-        dl_button = QtGui.QPushButton("Import")
-        dl_button.clicked.connect(download_datasets)
 
         layout = QtGui.QVBoxLayout()
         layout.addWidget(label)
         layout.addWidget(ds_list)
         layout.addWidget(button)
-        layout.addWidget(dl_button)
         page.setLayout(layout)
 
         return page
