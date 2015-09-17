@@ -26,6 +26,21 @@ class DownloadWithProgress:
         self.error = error
         self.canceled = canceled
 
+    def ended(self):
+        if not self.cancel and not self.hasError:
+            try:
+                self.content = self.reply.readAll()
+                if self.downloaddir:
+                    fileInfo = QtCore.QFileInfo(self.url)
+                    fileName = os.path.join(self.downloaddir, fileInfo.fileName())
+                    f = QtCore.QFile(os.path.join(self.downloaddir, fileName))
+                    f.open(QtCore.QIODevice.WriteOnly)
+                    f.write(self.content)
+                    f.close()
+                self.finished(self.content)
+            except OSError:
+                QtGui.QMessageBox.critical(self.parent, "Network Error","An error occured downloading.")
+
     def cancelDownload(self):
         self.cancel = True
         self.reply.abort()
@@ -41,31 +56,17 @@ class DownloadWithProgress:
 
         self.reply = self.manager.get(request)
         self.reply.error[QtNetwork.QNetworkReply.NetworkError].connect(self.slotError)
+        #self.reply.finished.connect(self.ended)
         self.reply.downloadProgress.connect(self.updateProgress)
 
         self.pd.exec_()
+        self.ended()
 
     def updateProgress(self, rec, total):
-        self.pd.setMaximum(total+1)
+        if total == -1:
+            total = rec+1
+        self.pd.setMaximum(total)
         self.pd.setValue(rec)
-        if rec == total:
-            if not self.hasError:
-                try:
-                    self.content = self.reply.readAll()
-                    if self.downloaddir:
-                        fileInfo = QtCore.QFileInfo(self.url)
-                        fileName = os.path.join(self.downloaddir, fileInfo.fileName())
-                        f = QtCore.QFile(os.path.join(self.downloaddir, fileName))
-                        f.open(QtCore.QIODevice.WriteOnly)
-                        f.write(self.content)
-                        f.close()
-                    self.finished(self.content)
-                except OSError:
-                    QtGui.QMessageBox.critical(self.parent, "Network Error","An error occured downloading.")
-                self.pd.setValue(rec+1)
-            else:
-                QtGui.QMessageBox.critical(self.parent, "Network Error","An error occured downloading.")
-                self.pd.setValue(rec+1)
 
 
 
