@@ -158,7 +158,7 @@ class SpellBookWindow(QtGui.QMainWindow):
         # This will deactivate the unused warning in vim
         if icons:
             pass
-        self.setUnifiedTitleAndToolBarOnMac(True)
+        self.setUnifiedTitleAndToolBarOnMac(True)        
         self.db = db
         self.configfile = configfile
         self.config = {}
@@ -335,7 +335,7 @@ class SpellBookWindow(QtGui.QMainWindow):
         self.emptyWidget.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
         self.toolbar.addWidget(self.emptyWidget)
         self.toolbar.addWidget(self.filterSpellsEdit)
-
+        self.resize(1024,600)
 
         self.classFilter = ""
         self.searchText = ""
@@ -725,16 +725,26 @@ class SpellBookWindow(QtGui.QMainWindow):
             self.reloadModel()
 
     def showConfig(self):
+        oldbackend = self.config["backend"]
         Dialog = QtGui.QDialog()
         cd = ConfigDialog()
         cd.setupUi(Dialog)
         cd.loadConfig(self.config)
         if Dialog.exec_():
             self.config = cd.getConfig()
+            if self.config["backend"] == "HTML" and self.config["backend"] != oldbackend:
+                self.pdffilename = None
+                self.exportBookAction.setText("&Export to HTML...")
+            elif oldbackend == "HTML" and self.config["backend"] != oldbackend:
+                self.pdffilename = None
+                self.exportBookAction.setText("&Export to PDF...")
             with open(self.configfile, 'w') as f:
                 json.dump(self.config, f, indent=2)
 
     def openBook(self):
+        directory = os.path.expanduser("~")
+        if self.filename:
+            directory = os.path.dirname(self.filename)
         if self.isModified():
             msgBox = QtGui.QMessageBox()
             msgBox.setText("The spellbook has been modified.")
@@ -742,9 +752,8 @@ class SpellBookWindow(QtGui.QMainWindow):
             msgBox.setStandardButtons(QtGui.QMessageBox.Yes | QtGui.QMessageBox.No | QtGui.QMessageBox.Cancel)
             msgBox.setDefaultButton(QtGui.QMessageBox.Yes)
             ret = msgBox.exec_()
-
             if ret == QtGui.QMessageBox.No:
-                filename, filters = QtGui.QFileDialog.getOpenFileName()
+                filename, filters = QtGui.QFileDialog.getOpenFileName(self, dir=directory, filter="Spellbooks (*.book);;All Files (*)")
                 if filename:
                     SpellBookHandler.open(filename, self)
                     self.filename = filename
@@ -752,7 +761,7 @@ class SpellBookWindow(QtGui.QMainWindow):
             elif ret == QtGui.QMessageBox.Yes:
                 self.saveBook()
         else:
-            filename, filters = QtGui.QFileDialog.getOpenFileName()
+            filename, filters = QtGui.QFileDialog.getOpenFileName(self, dir=directory, filter="Spellbooks (*.book);;All Files (*)")
             if filename:
                 SpellBookHandler.open(filename, self)
                 self.modified = False
@@ -760,7 +769,10 @@ class SpellBookWindow(QtGui.QMainWindow):
                 self.updateWindowName()
 
     def saveAsBook(self):
-        filename, filters = QtGui.QFileDialog.getSaveFileName()
+        directory = os.path.expanduser("~")
+        if self.filename:
+            directory = os.path.dirname(self.filename)
+        filename, filters = QtGui.QFileDialog.getSaveFileName(self, dir=directory, filter="Spellbooks (*.book);;All Files (*)")
         if filename:
             SpellBookHandler.save(filename, self)
             self.modified = False
@@ -771,7 +783,7 @@ class SpellBookWindow(QtGui.QMainWindow):
         if self.filename:
             filename = self.filename
         else:
-            filename, filters = QtGui.QFileDialog.getSaveFileName()
+            filename, filters = QtGui.QFileDialog.getSaveFileName(self, dir=os.path.expanduser("~"), filter="Spellbooks (*.book);;All Files (*)")
         if filename:
             SpellBookHandler.save(filename, self)
             self.modified = False
@@ -785,7 +797,13 @@ class SpellBookWindow(QtGui.QMainWindow):
             self.exportAsBook()
 
     def exportAsBook(self):
-        filename, filters = QtGui.QFileDialog.getSaveFileName()
+        ffilter="PDF Files (*.pdf);;All Files (*)"
+        if self.config["backend"] == "HTML":
+            ffilter="HTML Files (*.html);;All Files (*)"
+        directory = os.path.expanduser("~")
+        if self.pdffilename:
+            directory = os.path.dirname(self.pdffilename)
+        filename, filters = QtGui.QFileDialog.getSaveFileName(self, dir=directory, filter=ffilter)
         if filename:
             self.pdffilename = filename
             self.exportBookAction.setText("Export to %s" % os.path.basename(self.pdffilename))

@@ -2,7 +2,7 @@ import sys
 import os
 import signal
 from appdirs import AppDirs
-from PySide import QtGui
+from PySide import QtGui, QtCore
 from pySpellbook.db import db
 from pySpellbook.newMainWindow import SpellBookWindow
 
@@ -13,7 +13,9 @@ def run_pyspellbook():
     datadir = dirs.user_data_dir
     os.makedirs(configdir, exist_ok=True)
     os.makedirs(datadir, exist_ok=True)
-    app = QtGui.QApplication(sys.argv)
+    if sys.platform == "darwin":
+        app = QtGui.QApplication(sys.argv)
+    app.setAttribute(QtCore.Qt.AA_DontShowIconsInMenus)
     DB = db(os.path.join(datadir,"spells.db"), debug=False)
     mainWindow = SpellBookWindow(DB, os.path.join(configdir, "pyspellbook.conf"))
     mainWindow.show()
