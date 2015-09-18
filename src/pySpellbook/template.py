@@ -13,10 +13,12 @@ import tempfile
 import shutil
 import traceback
 import subprocess
+#from PySide import QtGui
 
 def find_data_file(filename):
     if getattr(sys, 'frozen', False):
         # The application is frozen
+        #QtGui.QMessageBox.critical(None, "Network Error",os.path.join(os.path.dirname(sys.executable), filename))
         return os.path.join(os.path.dirname(sys.executable), filename)
     else:
         # The application is not frozen
@@ -25,6 +27,7 @@ def find_data_file(filename):
 def list_data_dir(filename):
     if getattr(sys, 'frozen', False):
         base_dir = find_data_file("templates/html/resources")
+        #QtGui.QMessageBox.critical(None, "Network Error",os.listdir(base_dir))
         return os.listdir(base_dir)
     else:
         return resource_listdir(__name__,'templates/html/resources')
@@ -158,7 +161,11 @@ class HTMLGenerator:
         self.spellbook['title'] = title
         self.spellbook['author'] = author
         self.tp_path = os.path.dirname(self.template_filename)
-        self.resourcelist = [find_data_file(os.path.join("templates","html","resources",r)) for r in list_data_dir('templates/html/resources')]
+        if getattr(sys, 'frozen', False) and sys.platform == "darwin":
+            self.resourcelist = [] # Weird OSX Errors
+        else:
+            self.resourcelist = [find_data_file(os.path.join("templates","html","resources",r)) for r in list_data_dir('templates/html/resources')]
+        #QtGui.QMessageBox.critical(None, "Network Error","am i still here?")  
         dict_spells = model.getCheckedSpells()
         for d20class, levels in dict_spells.items():
             for level, spells in levels.items():
@@ -167,13 +174,17 @@ class HTMLGenerator:
                     spell.text = HTMLGenerator.removeLinks(HTMLGenerator.sanitizeQuotes(spell.text))
         self.spellbook['spells'] = dict_spells
         self.rendered = self.template.render(spellbook=self.spellbook, template_path=self.tp_path)
+        #QtGui.QMessageBox.critical(None, "Network Error","complete_a")  
 
-    def make_book(self, filename, config):        
+    def make_book(self, filename, config):  
+        #QtGui.QMessageBox.critical(None, "Network Error","make_book")       
         with tempfile.TemporaryDirectory(prefix="pySpellbook-") as tempdir:
             temphtml = tempfile.NamedTemporaryFile(dir=tempdir, delete=False, suffix=".html", mode="w")
             temphtml.write(self.rendered)
+            #QtGui.QMessageBox.critical(None, "Network Error","wrote html")  
             tmpname = temphtml.name
             temphtml.close()
+            #QtGui.QMessageBox.critical(None, "Network Error",tmpname)  
             #os.mkdir(os.path.join(tempdir, "resources"))
             #for r in self.resourcelist:
             #    shutil.copy(r, os.path.join(tempdir,"resources"))
