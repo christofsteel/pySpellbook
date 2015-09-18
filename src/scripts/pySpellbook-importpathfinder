@@ -1,11 +1,16 @@
 #!/usr/bin/env python3
+import sys
 try:
     from pySpellbook.importTools import Importer
 except ImportError:
-    from importTools import Importer
-from pyquery import PyQuery as pq
+    sys.path.append("..")
+    from pySpellbook.importTools import Importer
+try:
+    from pyquery import PyQuery as pq
+except ImportError:
+    print("The importscript depends on the python library \"pyquery\". Please install pyquery.", file=sys.stderr)
+    sys.exit(1)
 import re
-import sys
 
 class PathfinderImporter(Importer):
     def __init__(self, base_url):

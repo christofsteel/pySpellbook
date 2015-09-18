@@ -1,0 +1,230 @@
+#!/usr/bin/env python3
+import sys
+try:
+    from pySpellbook.importTools import Importer
+except ImportError:
+    sys.path.append("..")
+    from pySpellbook.importTools import Importer
+try:
+    from pyquery import PyQuery as pq
+except ImportError:
+    print("The importscript depends on the python library \"pyquery\". Please install pyquery.", file=sys.stderr)
+    sys.exit(1)
+import json
+import re
+
+class PathfinderDEImporter(Importer):
+    def __init__(self, base_url):
+        super().__init__("/ZauberlistenIndex/print", base_url=base_url)
+
+    def parseSpell(self, link, ispell):
+        with open(self.base_url + link, 'rb') as f:
+            stripped_html = re.sub("(<em><a.*?>|</a\s*></em>|<a.*?>|</a\s*>|<sup.*?>.*?</sup>)","",f.read().decode('latin-1').replace('&nbsp;', ' '))
+            spell_page = pq(stripped_html)
+            titles = spell_page("#page .cl-stat-block-title").items()
+            #if ispell['name'] == "Taktisches Können":
+            #    print(spell_page.html())
+            found = False
+            for title in titles:
+                name = title.text().replace(' ', " ")
+                if self.normalize(name) == self.normalize(ispell["name"]):
+                    found = True
+                    eop = False
+                    elem = title.parent().next()
+                    while not (elem.is_("h1") or elem.is_("h3") or elem.is_("h4")):
+                        elem = elem.next()
+                        if elem.is_("br") and ((elem[0].tail == None) or elem[0].tail.strip() == "") and elem.next().is_("br"):
+                            eop = True
+                            break
+                        if elem.is_("strong"):
+                            if elem.text().strip() == "Schule:" or elem.text().strip() == "Schule":
+                                if eop:
+                                    print("School %s" % ispell["name"])
+                                    sys.exit(1)
+                                school_subs_and_desc = elem[0].tail
+                                ssad_match = re.match("\s*(?P<school>[^ ]*?)\s*(?:\((?P<subschool>.*?)\))?\s*(?:\[(?P<descriptors>.*?)(?:\])?)?\s*;", school_subs_and_desc)
+                                try:
+                                    ispell["school"] = ssad_match.group("school")
+                                    if ispell["school"] == "Bannmagie":
+                                        ispell["school"] = "Bannzauber"
+                                    elif ispell["school"].startswith("Erkenntnis"):
+                                        ispell["school"] = "Erkenntniszauber"
+                                    elif ispell["school"].startswith("Hervorrung") or ispell["school"] == "Herbeizauberung":
+                                        ispell["school"] = "Hervorrufung"
+                                    elif ispell["school"] == "Illusionen":
+                                        ispell["school"] = "Illusion"
+                                    elif ispell["school"] == "Verzauberung:":
+                                        ispell["school"] = "Verzauberung"
+                                    ispell["subschool"] = ssad_match.group("subschool")
+                                    if ispell["subschool"] == "Phantome":
+                                        ispell["subschool"] = "Phantom"
+                                    if ispell["subschool"] == "Teleportierung":
+                                        ispell["subschool"] = "Teleportation"
+                                    desc = ssad_match.group("descriptors")
+                                    if desc:
+                                        ispell["descriptors"] = [d.strip().capitalize() for d in desc.replace("/",",").replace(" oder ", ",").split(",")]
+                                        for d in ispell["descriptors"]:
+                                            if d == "Gut":
+                                                ispell["descriptors"].remove(d)
+                                                ispell["descriptors"].append("Gutes")
+                                            if d == "Böse":
+                                                ispell["descriptors"].remove(d)
+                                                ispell["descriptors"].append("Böses")
+                                            elif d == "Eis":
+                                                ispell["descriptors"].remove(d)
+                                                ispell["descriptors"].append("Kälte")
+                                            elif d.lower().startswith("gedanken"):
+                                                ispell["descriptors"].remove(d)
+                                                ispell["descriptors"].append("Geistesbeeinflussung")
+                                            elif d.lower().startswith("geistes"):
+                                                ispell["descriptors"].remove(d)
+                                                ispell["descriptors"].append("Geistesbeeinflussung")
+                                            elif d == "Variable":
+                                                ispell["descriptors"].remove(d)
+                                                ispell["descriptors"].append("Siehe Text")
+                                            elif d.lower().startswith("siehe"):
+                                                ispell["descriptors"].remove(d)
+                                                ispell["descriptors"].append("Siehe Text")
+                                    else:
+                                        ispell["descriptors"] = None
+                                except:
+                                    print(ispell['name'])
+                                    print(link)
+                                    print(school_subs_and_desc)
+                                    sys.exit(1)
+                                continue
+                            if elem.text().strip().replace(":", "") == "Grad":
+                                if eop:
+                                    print("Grad %s" % ispell["name"])
+                                    sys.exit(1)
+                                continue
+                            if elem.text().strip().replace(":", "") == "Komponenten":
+                                components = elem[0].tail.strip()
+                                if ispell["name"] in ["Identifizieren", "Benommenheit"]:
+                                    components = components + " " + elem.next()[0].tail.strip()
+                                if "(" in components:
+                                    match = re.match("(?P<components>.*?)\s*\((?P<text>.*?)\)",components)
+                                    components = match.group("components")
+                                    ispell["material_text"] = match.group("text")
+                                for component in components.split(","):
+                                    if component.strip() == "V":
+                                        ispell["verbal"] = True
+                                    if component.strip() == "G":
+                                        ispell["somatic"] = True
+                                    if component.strip() == "GF":
+                                        ispell["divine_focus"] = True
+                                    if component.strip() == "F":
+                                        ispell["arcane_focus"] = True
+                                    if component.strip() == "M":
+                                        ispell["material"] = True
+                                if eop:
+                                    print("Komponenten %s" % ispell["name"])
+                                    sys.exit(1)
+                                continue
+                            ger_to_eng = {"Zeitaufwand": "casting_time",
+                                          "Reichweite": "spell_range",
+                                          "Wirkungsbereich": "area",
+                                          "Wirkungsdauer": "duration",
+                                          "Wirkung": "effect",
+                                          "Ziel/Effekt": "target",
+                                          "Ziel oder Wirkungsbereich": "target",
+                                          "ZielE": "target",
+                                          "Ziel, Effekt oder Wirkungsbereich": "target",
+                                          "Rettungswurf": "save",
+                                          "Effekt": "effect",
+                                          "Ziele": "target",
+                                          "Ziel": "target",
+                                          "Zauberresistenz": "spell_res"}
+                            if elem.text().strip().replace(":", "") in ger_to_eng.keys():
+                                if eop:
+                                    if ispell["name"] == "Wächter und Hüter"\
+                                            or ispell["name"] == "Wort des Chaos":
+                                        continue
+                                    print("%s %s" % (elem.text(),ispell["name"]))
+                                    sys.exit(1)
+                                ispell[ger_to_eng[elem.text().strip().replace(":","")]] = elem[0].tail.strip()
+                                continue
+                            if not eop:
+                                print("%s is not parsable in %s" % (elem.text(), ispell["name"]))
+                    if not eop:
+                        print("NO EOP in %s" % ispell['name'])
+                        sys.exit(1)
+                    # now parse spell text:
+                    ispell['text'] = "<p>"
+                    while not (elem.is_("h1") or elem.is_("h3") or elem.is_("h4")):
+                        ispell['text'] = ispell['text'] + elem.outerHtml() + (elem[0].tail if elem[0].tail else "")
+                        elem = elem.next()
+                    ispell['text'] = ispell['text'].replace("\n","").replace("<!--notypo-->","").replace("<!--/notypo-->","").replace("<br>","</p><p>").replace("<br/>", "</p><p>").replace("<p></p>", "").strip()
+                    if ispell['text'].endswith("<p>"):
+                        ispell['text'] = ispell['text'][:-3]
+
+
+            if found == False:
+                sys.exit(1)
+        return ispell
+
+    def postParse(self):
+        for spell in self._spells:
+            if not "school" in spell.keys():
+                if "," in spell["name"]:
+                    parent_spell_name = spell["name"].split(",")[0]
+                    parent_spell = self.findSpellByName(parent_spell_name)
+                    if not parent_spell:
+                        print("%s does not exist" % parent_spell_name)
+                    else:
+                        spell["school"] = parent_spell["school"]
+                        spell["subschool"] = parent_spell["subschool"]
+                        if not 'descriptors' in spell.keys():
+                            spell["descriptors"] = parent_spell["descriptors"]
+                else:
+                    print("%s has no school" % spell["name"])
+
+    def save(self, filename):
+        spells = self.getSpells()
+        with open(filename, 'w') as f:
+            json.dump(sorted(spells, key=lambda spell: spell['name']), f, ensure_ascii=False)
+
+    def listSpellIndex(self):
+        def takeStrWhile(s,f):
+            r = ""
+            for c in s:
+                if f(c):
+                    r += c
+                else:
+                    return r
+            return r
+
+        with open(self.base_url + self.root, "br") as f:
+            bytemansch = f.read()
+            bettertext = str(bytemansch, 'latin-1')
+            index = pq(bettertext)
+            bookDict = {l.attr("for").replace("_","").replace("ö","oe").replace("Andere", "AndereBaende"): l.text() for l in index("#Regelwerke label").items()}
+            bookDict["Ausruestungskompendium"] = "Ausrüstungskompendium"
+            mappings_a = {c.text(): c.attr("for") for c in index('input[name="Klasse"]').next().items()}
+            mappings = {}
+            for c, l in mappings_a.items():
+                if '/' in c:
+                    for _c in c.split("/"):
+                        mappings[_c] = l
+                else:
+                    mappings[c] = l
+            for d20class, zlist in sorted(mappings.items()):
+                print(d20class)
+                for level in range(10):
+                    spells = [(a.attr("href")[23:]+"/print", bookDict[takeStrWhile(a.attr("href")[24:], lambda c: c != '/')], a.text(), ) for a in index("#list_%s_%s li a" % (zlist,level)).items()]
+                    for link, rulebook, name in spells:
+                        if rulebook == "Ausrüstungskompendium":
+                            continue
+                        spell = {}
+                        spell["name"] = name
+                        spell["rulebook"] = rulebook
+                        spell["system"] = "PathfinderDE"
+                        spell["classes"] = [(d20class, level)]
+                        yield (link, spell)
+
+
+
+
+if __name__ == "__main__":
+    PathfinderDEImporter(sys.argv[1]).save(sys.argv[2])
+

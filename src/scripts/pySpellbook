@@ -1,0 +1,14 @@
+#!/usr/bin/env python3
+
+try:
+    import pySpellbook.run
+except ImportError:
+    import sys
+    sys.path.append("..")
+    import pySpellbook.run
+
+def main():
+    pySpellbook.run.run_pyspellbook()
+
+if __name__ == "__main__":
+    main()
