@@ -21,6 +21,9 @@ See https://launchpad.net/~christofsteel/+archive/ubuntu/pyspellbook for instruc
 on how to add the PPA to your system. Debian users can pick any release, they contain 
 the same files anyway.
 
+### Linux (Archlinux)
+You can install `pySpellbook` from the [AUR] (http://aur.archlinux.org)
+
 ### Linux (Other)
 If you are on linux and have python 3 and pip installed, then install it
 via
