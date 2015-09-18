@@ -10,6 +10,18 @@ In addition you can browse and filter your spell library by class, rulebook,
 school/subschool, descriptor and fulltextsearch.
 
 ## How to install?
+### Windows
+Download the current release from [Releases] (https://github.com/christofsteel/pySpellbook/releases)
+
+### Mac OSX
+Download the current release from [Releases] (https://github.com/christofsteel/pySpellbook/releases)
+
+### Linux (Ubuntu/Debian)
+See https://launchpad.net/~christofsteel/+archive/ubuntu/pyspellbook for instructions 
+on how to add the PPA to your system. Debian users can pick any release, they contain 
+the same files anyway.
+
+### Linux (Other)
 If you are on linux and have python 3 and pip installed, then install it
 via
 
@@ -17,12 +29,13 @@ via
 
 this will fetch all python dependencies and install the binary pySpellbook.
 
-For windows releases there is an installer in "Releases"
+## Prince
 
 pySpellbook uses Prince to render the pdf output. Unfortunately Prince  is
-not open source software, but free for personal use. To install prince 
-download it here (http://www.princexml.com/download/) and set the correct 
-path in pySpellbooks "Config export..." dialog.
+not open source software, but free for personal use. 
+
+The first run wizard should install Prince on your system, but you can decide
+to install it manually from http://www.princexml.com.
 
 If you do not want to use Prince, you can use an internal renderer or 
 print the intermediate html with your favourite browser (Firefox recommended),
