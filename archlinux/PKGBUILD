@@ -15,9 +15,9 @@ options=(!emptydirs)
 source=("https://github.com/christofsteel/${pkgname}/archive/v${pkgver}.tar.gz")
 
 package() {
-  cd "$srcdir/$pkgname-master"
+  cd "$srcdir/$pkgname-$pkgver"
   python setup.py install --root="$pkgdir/" --optimize=1
 }
+md5sums=('5aea1584119eb7a398356c65b5f23c41')
 
 # vim:set ts=2 sw=2 et:
-md5sums=('62af4515dcaf068bca39f28bbdcaded8')
