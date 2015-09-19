@@ -116,7 +116,7 @@ class Wizard(QtGui.QWizard):
                 if platform.machine() == "x86_64":
                     filename = "prince-10r4-linux-generic-x86_64.tar.gz"
                 else:
-                    filename = "prince-10r4-linux-generic-x86.tar.gz"
+                    filename = "prince-10r4-linux-generic-i686.tar.gz"
             elif sys.platform == "darwin":
                 filename = "prince-10r4-macosx.tar.gz"
             else:
