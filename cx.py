@@ -26,7 +26,7 @@ import sys
 base = 'Win32GUI' if sys.platform=='win32' else None
 
 executables = [
-    Executable('src/script/pySpellbook', base=base, targetName = 'pySpellbook.exe' if sys.platform == "win32" else "pySpellbook",
+    Executable('src/scripts/pySpellbook', base=base, targetName = 'pySpellbook.exe' if sys.platform == "win32" else "pySpellbook",
                icon='src/icons/pySpellbook.ico', shortcutName="PySpellbook", shortcutDir="StartMenuFolder")
 ]
 

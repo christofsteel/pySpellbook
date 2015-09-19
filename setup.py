@@ -11,6 +11,12 @@ extras = {
     'import': 'pyquery'
 }
 
+if sys.platform != "win32":
+    data_files=[('share/applications/', ['src/pySpellbook.desktop']),
+                ('share/pixmaps/', ['src/icons/pySpellbook.png'])],
+else:
+    data_files = []
+
 setup(
     name = "pySpellbook",
     author = "Christoph Stahl",
@@ -32,8 +38,7 @@ setup(
     packages = find_packages('src'),
     package_dir = {'':'src'},
     extras_require = extras,
-    data_files=[('share/applications/', ['src/pySpellbook.desktop']),
-                ('share/pixmaps/', ['src/icons/pySpellbook.png'])],
+    data_files = data_files,
     package_data = {'pySpellbook':['templates/html/resources/*','templates/html/template.html']},
     scripts = [ "src/scripts/pySpellbook", "src/scripts/pySpellbook-importpathfinder", "src/scripts/pySpellbook-importpathfinderDE" ],
     install_requires = install_requires,
