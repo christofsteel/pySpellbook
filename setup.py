@@ -13,7 +13,7 @@ extras = {
 
 if sys.platform != "win32":
     data_files=[('share/applications/', ['src/pySpellbook.desktop']),
-                ('share/pixmaps/', ['src/icons/pySpellbook.png'])],
+                ('share/pixmaps/', ['src/icons/pySpellbook.png'])]
 else:
     data_files = []
 
