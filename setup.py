@@ -34,7 +34,7 @@ setup(
         'Topic :: Games/Entertainment :: Role-Playing'
 
     ],
-    version = "0.8.0",
+    version = "0.8.0.1",
     packages = find_packages('src'),
     package_dir = {'':'src'},
     extras_require = extras,
