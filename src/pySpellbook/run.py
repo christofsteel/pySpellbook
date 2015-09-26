@@ -6,7 +6,7 @@ from PySide import QtGui, QtCore
 from pySpellbook.db import db
 from pySpellbook.newMainWindow import SpellBookWindow
 
-VERSION="0.8.0"
+VERSION="0.8.1"
 
 def run_pyspellbook():
     signal.signal(signal.SIGINT, signal.SIG_DFL)
