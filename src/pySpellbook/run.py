@@ -6,6 +6,8 @@ from PySide import QtGui, QtCore
 from pySpellbook.db import db
 from pySpellbook.newMainWindow import SpellBookWindow
 
+VERSION="0.8.0"
+
 def run_pyspellbook():
     signal.signal(signal.SIGINT, signal.SIG_DFL)
     dirs = AppDirs("pySpellbook")
@@ -17,6 +19,6 @@ def run_pyspellbook():
     if sys.platform == "darwin":
         app.setAttribute(QtCore.Qt.AA_DontShowIconsInMenus)
     DB = db(os.path.join(datadir,"spells.db"), debug=False)
-    mainWindow = SpellBookWindow(DB, os.path.join(configdir, "pyspellbook.conf"))
+    mainWindow = SpellBookWindow(DB, os.path.join(configdir, "pyspellbook.conf"), VERSION)
     mainWindow.show()
     sys.exit(app.exec_())

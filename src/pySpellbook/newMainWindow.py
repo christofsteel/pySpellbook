@@ -4,12 +4,34 @@ from jinja2 import Template
 import os
 import json
 import sys
+import urllib.request
+from distutils.version import LooseVersion
+
 import pySpellbook.bw_icons_rc as icons
 from pySpellbook.qmodel import SpellModel, FilterModel
 from pySpellbook.template import LatexGenerator, HTMLGenerator
 from pySpellbook.addSpellWindow import AddSpellWindow
 from pySpellbook.config_window import ConfigDialog
 from pySpellbook.firstRunWizard import Wizard
+
+class UpdateNotifier(QtCore.QThread):
+    updateAvailable = QtCore.Signal()
+    def __init__(self, version):
+        super().__init__()
+        self.version = version
+
+    def run(self):
+        try:
+            blatest = urllib.request.urlopen("https://christofsteel.github.io/pySpellbook/latest")
+            slatest = blatest.read().decode('utf-8').strip()
+            latest_version = LooseVersion(slatest)
+            current_version = LooseVersion(self.version)
+            if (latest_version > current_version):
+                print("Update available %s. Current version in %s." % (latest_version, current_version))
+                self.updateAvailable.emit()
+        except urllib.error.URLError:
+            print("Error loading url")
+
 
 
 class SpellBookHandler:
@@ -153,12 +175,13 @@ class SpellBookWindow(QtGui.QMainWindow):
         self.spelllist.setHidden(False)
 
 
-    def __init__(self, db, configfile):
+    def __init__(self, db, configfile, version):
         super().__init__()
         # This will deactivate the unused warning in vim
         if icons:
             pass
-        self.setUnifiedTitleAndToolBarOnMac(True)        
+        self.setUnifiedTitleAndToolBarOnMac(True)
+        self.version = version
         self.db = db
         self.configfile = configfile
         self.config = {}
@@ -333,7 +356,13 @@ class SpellBookWindow(QtGui.QMainWindow):
         self.toolbar.addAction(self.addSpellAction)
         self.emptyWidget = QtGui.QWidget()
         self.emptyWidget.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
+        self.updateNotify = QtGui.QLabel("")
+        self.updateThread = UpdateNotifier(self.version)
+        self.updateThread.updateAvailable.connect(self.setUpdate)
+        self.updateThread.start()
+        self.updateNotify.setOpenExternalLinks(True)
         self.toolbar.addWidget(self.emptyWidget)
+        self.toolbar.addWidget(self.updateNotify)
         self.toolbar.addWidget(self.filterSpellsEdit)
         self.resize(1024,600)
 
@@ -364,6 +393,8 @@ class SpellBookWindow(QtGui.QMainWindow):
             wizard = Wizard(self, db)
             wizard.exec_()
 
+    def setUpdate(self):
+        self.updateNotify.setText("<b><a href='https://github.com/christofsteel/pySpellbook/releases'>Update available!</a></b> ")
     def rerunWizard(self):
         wizard = Wizard(self, self.db)
         wizard.exec_()
@@ -576,8 +607,8 @@ class SpellBookWindow(QtGui.QMainWindow):
             escaped_system = system.replace("&", "&&")
             systemMenu = self.filterSystemMenu.addMenu(escaped_system)
             rulebooks = [rulebook.name for rulebook in self.db.list_rulebooks(system)]
-            check_all = systemMenu.addAction("Select All")
-            uncheck_all = systemMenu.addAction("Deselect All")
+            check_all = systemMenu.addAction("All")
+            uncheck_all = systemMenu.addAction("None")
             uncheck_all.triggered.connect(self.uncheck(systemMenu))
             check_all.triggered.connect(self.check(systemMenu))
             systemMenu.addSeparator()
@@ -594,8 +625,8 @@ class SpellBookWindow(QtGui.QMainWindow):
         self.filterDescriptorMenu.clear()
         descriptors = [result.name for result in self.db.list_descriptors()]
         self.beginPauseFilters()
-        check_all = self.filterDescriptorMenu.addAction("Select All")
-        uncheck_all = self.filterDescriptorMenu.addAction("Deselect All")
+        check_all = self.filterDescriptorMenu.addAction("All")
+        uncheck_all = self.filterDescriptorMenu.addAction("None")
         uncheck_all.triggered.connect(self.uncheck(self.filterDescriptorMenu))
         check_all.triggered.connect(self.check(self.filterDescriptorMenu))
         self.filterDescriptorMenu.addSeparator()
@@ -617,8 +648,8 @@ class SpellBookWindow(QtGui.QMainWindow):
         self.filterSubschoolMenu.clear()
         subschools = [result.name for result in self.db.list_subschools()]
         self.beginPauseFilters()
-        check_all = self.filterSubschoolMenu.addAction("Select All")
-        uncheck_all = self.filterSubschoolMenu.addAction("Deselect All")
+        check_all = self.filterSubschoolMenu.addAction("All")
+        uncheck_all = self.filterSubschoolMenu.addAction("None")
         uncheck_all.triggered.connect(self.uncheck(self.filterSubschoolMenu))
         check_all.triggered.connect(self.check(self.filterSubschoolMenu))
         self.filterSubschoolMenu.addSeparator()
@@ -640,8 +671,8 @@ class SpellBookWindow(QtGui.QMainWindow):
         self.filterSchoolMenu.clear()
         schools = [result.name for result in self.db.list_schools()]
         self.beginPauseFilters()
-        check_all = self.filterSchoolMenu.addAction("Select All")
-        uncheck_all = self.filterSchoolMenu.addAction("Deselect All")
+        check_all = self.filterSchoolMenu.addAction("All")
+        uncheck_all = self.filterSchoolMenu.addAction("None")
         uncheck_all.triggered.connect(self.uncheck(self.filterSchoolMenu))
         check_all.triggered.connect(self.check(self.filterSchoolMenu))
         self.filterSchoolMenu.addSeparator()
