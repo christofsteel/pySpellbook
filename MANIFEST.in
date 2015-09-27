@@ -1,5 +1,5 @@
 include src/pySpellbook.desktop
 include src/icons/pySpellbook.png
 include LICENSE.txt
-include LICENSES/*
+recursive-include LICENSES *
 include README.md
