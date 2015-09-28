@@ -398,7 +398,7 @@ class SpellBookWindow(QtGui.QMainWindow):
         self.filterSelectedAction.toggled.connect(self.filterSelected)
 
         # Tooolbar
-        self.toolbar = self.addToolBar("")
+        self.toolbar = self.addToolBar("Toolbar")
         self.toolbar.setFloatable(False)
         self.toolbar.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
         self.toolbar.addAction(self.newAction)
