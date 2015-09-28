@@ -42,7 +42,7 @@ setup(
     package_data = {'pySpellbook':['templates/html/resources/*','templates/html/template.html']},
     scripts = [ "src/scripts/pySpellbook",
                 "src/scripts/pySpellbook-importpathfinder",
-                "src/scripts/pySpellbook-importpathfinderDE"
+                "src/scripts/pySpellbook-importpathfinderDE",
                 "src/scripts/pySpellbook-importd20srd"
                ],
     install_requires = install_requires,
