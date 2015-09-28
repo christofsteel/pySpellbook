@@ -198,7 +198,7 @@ class Wizard(QtGui.QWizard):
                 current = urllib.request.urlopen("http://christofsteel.github.io/pySpellbook/datasets/current.json")
                 current_json = json.loads(current.readall().decode("utf-8"))
                 ds_list.clear()
-                for item in current_json.keys():
+                for item in sorted(current_json.keys()):
                     qitem = QtGui.QListWidgetItem("%s-%s.json" % (item, current_json[item]))
                     qitem.setCheckState(QtCore.Qt.Unchecked)
                     ds_list.addItem(qitem)
@@ -209,7 +209,6 @@ class Wizard(QtGui.QWizard):
 
         def finished(content):
             spells = json.loads(str(content))
-            #spells = json.loads(str(bytearray(content), encoding = "utf-8"))
 
             pd = QtGui.QProgressDialog("Importing Database", "Abort", 0, len(spells), self)
             pd.setWindowModality(QtCore.Qt.WindowModal)
@@ -229,8 +228,6 @@ class Wizard(QtGui.QWizard):
             for row in range(ds_list.model().rowCount()):
                 item = ds_list.item(row)
                 if item.checkState():
-                    #dl = DownloadWithProgress(self, "http://christofsteel.github.io/pySpellbook/datasets/%s" % item.text(), None, finished, None, None, "Downloading %s" % item.text())
-                    #dl.download()
                     try:
                         data = urllib.request.urlopen("http://christofsteel.github.io/pySpellbook/datasets/%s" % item.text())
                         finished(data.readall().decode("utf-8"))
