@@ -72,6 +72,51 @@ class SpellBookHandler:
 
 
 class SpellBookWindow(QtGui.QMainWindow):
+    def updateRecents(self):
+        if self.filename != self.config["recents"][0]:
+            if self.filename in self.config["recents"]:
+                self.config["recents"].remove(self.filename)
+            else:
+                self.config["recents"] = self.config["recents"][:4]
+            self.config["recents"].insert(0, self.filename)
+        self.updateRecentsActions()
+
+    def updateRecentsActions(self):
+        self.openRecentsMenu.clear()
+        for recent in self.config["recents"]:
+            action = self.openRecentsMenu.addAction(recent)
+            action.triggered.connect(self.openRecent(recent))
+
+    def openRecent(self, recent):
+        def inner():
+            if self.isModified():
+                msgBox = QtGui.QMessageBox()
+                msgBox.setText("The spellbook has been modified.")
+                msgBox.setInformativeText("Do you want to save your changes?")
+                msgBox.setStandardButtons(QtGui.QMessageBox.Yes | QtGui.QMessageBox.No | QtGui.QMessageBox.Cancel)
+                msgBox.setDefaultButton(QtGui.QMessageBox.Yes)
+                ret = msgBox.exec_()
+                if ret == QtGui.QMessageBox.No:
+                    SpellBookHandler.open(recent, self)
+                    self.filename = recent
+                    self.modified = False
+                    self.updateRecents()
+                    with open(self.configfile,'w') as f:
+                        json.dump(self.config, f, indent=2)
+                    self.updateWindowName()
+                elif ret == QtGui.QMessageBox.Yes:
+                    self.saveBook()
+            else:
+                SpellBookHandler.open(recent, self)
+                self.modified = False
+                self.filename = recent
+                self.updateRecents()
+                with open(self.configfile,'w') as f:
+                    json.dump(self.config, f, indent=2)
+                self.updateWindowName()
+        return inner
+
+
     def showSpell(self, index):
         template = """
         <h1>{{ spell.name }}</h1>
@@ -195,6 +240,7 @@ class SpellBookWindow(QtGui.QMainWindow):
                                    'subschools': [],
                                    'rulebooks': []
                                  }
+        self.config['recents'] = []
         self.firstRun = True
         if os.path.exists(self.configfile):
             with open(self.configfile) as f:
@@ -272,6 +318,7 @@ class SpellBookWindow(QtGui.QMainWindow):
         self.openAction.setIcon(QtGui.QIcon.fromTheme("document-open", QtGui.QIcon(":icons/document-open.png")))
         self.openAction.setShortcut(QtCore.Qt.CTRL + QtCore.Qt.Key_O)
         self.fileMenu.addAction(self.openAction)
+        self.openRecentsMenu = self.fileMenu.addMenu("Open &Recents...")
         self.fileMenu.addSeparator()
         self.saveAction = QtGui.QAction(self)
         self.saveAction.setText("&Save...")
@@ -595,10 +642,8 @@ class SpellBookWindow(QtGui.QMainWindow):
         self.filtermodel.setSubschoolFilter(list(self.filterSubschools))
         self.filterDescriptors = set(self.config["filters"]["descriptors"])
         self.filtermodel.setDescriptorFilter(list(self.filterDescriptors))
+        self.updateRecentsActions()
 
-        #self.filterRulebooks = set(self.config["filters"]["rulebooks"])
-        #self.filterSchools = set(self.config["filters"]["schools"])
-        #self.filterSubschools = set(self.config["filters"]["subschools"])
         self.refreshViews()
 
     def check(self, menu):
@@ -823,7 +868,11 @@ class SpellBookWindow(QtGui.QMainWindow):
                 filename, filters = QtGui.QFileDialog.getOpenFileName(self, dir=directory, filter="Spellbooks (*.book);;All Files (*)")
                 if filename:
                     SpellBookHandler.open(filename, self)
+                    self.modified = False
                     self.filename = filename
+                    self.updateRecents()
+                    with open(self.configfile,'w') as f:
+                        json.dump(self.config, f, indent=2)
                     self.updateWindowName()
             elif ret == QtGui.QMessageBox.Yes:
                 self.saveBook()
@@ -833,6 +882,9 @@ class SpellBookWindow(QtGui.QMainWindow):
                 SpellBookHandler.open(filename, self)
                 self.modified = False
                 self.filename = filename
+                self.updateRecents()
+                with open(self.configfile,'w') as f:
+                    json.dump(self.config, f, indent=2)
                 self.updateWindowName()
 
     def saveAsBook(self):
@@ -844,6 +896,9 @@ class SpellBookWindow(QtGui.QMainWindow):
             SpellBookHandler.save(filename, self)
             self.modified = False
             self.filename = filename
+            self.updateRecents()
+            with open(self.configfile,'w') as f:
+                json.dump(self.config, f, indent=2)
             self.updateWindowName()
 
     def saveBook(self):
@@ -855,6 +910,9 @@ class SpellBookWindow(QtGui.QMainWindow):
             SpellBookHandler.save(filename, self)
             self.modified = False
             self.filename = filename
+            self.updateRecents()
+            with open(self.configfile,'w') as f:
+                json.dump(self.config, f, indent=2)
             self.updateWindowName()
 
     def exportBook(self):
