@@ -185,15 +185,21 @@ class SpellBookWindow(QtGui.QMainWindow):
         self.db = db
         self.configfile = configfile
         self.config = {}
+        self.config['backend'] = 'internal'
+        self.config['custom'] = 'html2pdf $INPUT $OUTPUT'
+        self.config['prince_path'] = '/usr/bin/prince'
+        self.config['filters'] = { 'selected_only': False,
+                                   'descriptors': [],
+                                   'schools': [],
+                                   'subschools': [],
+                                   'rulebooks': []
+                                 }
         self.firstRun = True
         if os.path.exists(self.configfile):
             with open(self.configfile) as f:
-                self.config = json.load(f)
+                self.config.update(json.load(f))
                 self.firstRun = False
         else:
-            self.config['backend'] = 'internal'
-            self.config['custom'] = 'html2pdf $INPUT $OUTPUT'
-            self.config['prince_path'] = '/usr/bin/prince'
             with open(self.configfile,'w') as f:
                 json.dump(self.config, f, indent=2)
 
@@ -578,6 +584,20 @@ class SpellBookWindow(QtGui.QMainWindow):
         self.d20classlist.setModel(self.filtermodel)
         self.levellist.setModel(self.filtermodel)
         self.spelllist.setModel(self.filtermodel)
+        if self.config["filters"]["selected_only"]:
+            self.filterSelectedAction.setChecked(True)
+        self.filterRulebooks = set(self.config["filters"]["rulebooks"])
+        self.filtermodel.setRulebookFilter(list(self.filterRulebooks))
+        self.filterSchools = set(self.config["filters"]["schools"])
+        self.filtermodel.setSchoolFilter(list(self.filterSchools))
+        self.filterSubschools = set(self.config["filters"]["subschools"])
+        self.filtermodel.setSubschoolFilter(list(self.filterSubschools))
+        self.filterDescriptors = set(self.config["filters"]["descriptors"])
+        self.filtermodel.setDescriptorFilter(list(self.filterDescriptors))
+
+        #self.filterRulebooks = set(self.config["filters"]["rulebooks"])
+        #self.filterSchools = set(self.config["filters"]["schools"])
+        #self.filterSubschools = set(self.config["filters"]["subschools"])
         self.refreshViews()
 
     def check(self, menu):
@@ -695,6 +715,9 @@ class SpellBookWindow(QtGui.QMainWindow):
 
     def filterSelected(self, checked):
         self.filtermodel.setSelectedOnly(checked)
+        self.config["filters"]["selected_only"] = checked
+        with open(self.configfile,'w') as f:
+            json.dump(self.config, f, indent=2)
 
     def createDescriptorFilter(self, descriptor):
         def filter_descriptor(checked):
@@ -703,6 +726,9 @@ class SpellBookWindow(QtGui.QMainWindow):
             else:
                 self.filterDescriptors.add(descriptor)
             self.filtermodel.setDescriptorFilter(list(self.filterDescriptors))
+            self.config["filters"]["descriptors"] = list(self.filterDescriptors)
+            with open(self.configfile,'w') as f:
+                json.dump(self.config, f, indent=2)
         return filter_descriptor
 
     def createRulebookFilter(self, rulebook):
@@ -712,6 +738,9 @@ class SpellBookWindow(QtGui.QMainWindow):
             else:
                 self.filterRulebooks.add(rulebook)
             self.filtermodel.setRulebookFilter(list(self.filterRulebooks))
+            self.config["filters"]["rulebooks"] = list(self.filterRulebooks)
+            with open(self.configfile,'w') as f:
+                json.dump(self.config, f, indent=2)
         return filter_rulebook
 
     def createSubschoolFilter(self, subschool):
@@ -721,6 +750,9 @@ class SpellBookWindow(QtGui.QMainWindow):
             else:
                 self.filterSubschools.add(subschool)
             self.filtermodel.setSubschoolFilter(list(self.filterSubschools))
+            self.config["filters"]["subschools"] = list(self.filterSubschools)
+            with open(self.configfile,'w') as f:
+                json.dump(self.config, f, indent=2)
         return filter_subschool
 
     def createSchoolFilter(self, school):
@@ -730,6 +762,9 @@ class SpellBookWindow(QtGui.QMainWindow):
             else:
                 self.filterSchools.add(school)
             self.filtermodel.setSchoolFilter(list(self.filterSchools))
+            self.config["filters"]["schools"] = list(self.filterSchools)
+            with open(self.configfile,'w') as f:
+                json.dump(self.config, f, indent=2)
         return filter_school
 
     def showEditSpell(self):
