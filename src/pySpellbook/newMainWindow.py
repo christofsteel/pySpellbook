@@ -273,8 +273,10 @@ class SpellBookWindow(QtGui.QMainWindow):
         self.d20classlist = QtGui.QListView(self.spellArea)
         self.d20classArea.layout().addWidget(self.d20classlist)
         self.d20classlist.setAlternatingRowColors(True)
+        self.d20classlist.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
         self.levellist = QtGui.QListView(self.spellArea)
         self.levellist.setAlternatingRowColors(True)
+        self.levellist.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
         self.spelllist = QtGui.QListView(self.spellArea)
         self.spelllist.setAlternatingRowColors(True)
         self.spelllist.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
@@ -368,13 +370,25 @@ class SpellBookWindow(QtGui.QMainWindow):
         self.dbMenu.addSeparator()
         self.clearDBAction = self.dbMenu.addAction("Clear database")
 
+        self.selectAllLevelAction = QtGui.QAction("Select All", self)
+        self.selectAllClassAction = QtGui.QAction("Select All", self)
+        self.deselectAllLevelAction = QtGui.QAction("Deselect All", self)
+        self.deselectAllClassAction = QtGui.QAction("Deselect All", self)
         self.editSpellAction = QtGui.QAction("Edit...", self)
         self.deleteSpellAction = QtGui.QAction("Delete", self)
         self.spelllist.addAction(self.editSpellAction)
         self.spelllist.addAction(self.deleteSpellAction)
+        self.levellist.addAction(self.selectAllLevelAction)
+        self.levellist.addAction(self.deselectAllLevelAction)
+        self.d20classlist.addAction(self.selectAllClassAction)
+        self.d20classlist.addAction(self.deselectAllClassAction)
 
         self.editSpellAction.triggered.connect(self.showEditSpell)
         self.deleteSpellAction.triggered.connect(self.deleteSpell)
+        self.selectAllClassAction.triggered.connect(self.selectAllClass)
+        self.deselectAllClassAction.triggered.connect(self.deselectAllClass)
+        self.selectAllLevelAction.triggered.connect(self.selectAllLevel)
+        self.deselectAllLevelAction.triggered.connect(self.deselectAllLevel)
 
         self.filterSpellsEdit.textChanged.connect(self.search)
 
@@ -538,6 +552,44 @@ class SpellBookWindow(QtGui.QMainWindow):
         self.db.session.delete(spell)
         self.db.delete_empty()
         self.reloadModel()
+
+    def deselectAllLevel(self):
+        levelIndex = self.levellist.selectionModel().currentIndex()
+        levelIndex = self.filtermodel.mapToSource(levelIndex)
+        level = self.model.itemFromIndex(levelIndex)
+        level.safeload()
+        for spell_i in range(level.rowCount()):
+                level.child(spell_i).checkstate = 0
+        self.refreshViews()
+
+    def deselectAllClass(self):
+        classIndex = self.d20classlist.selectionModel().currentIndex()
+        classIndex = self.filtermodel.mapToSource(classIndex)
+        d20class = self.model.itemFromIndex(classIndex)
+        for level_i in range(d20class.rowCount()):
+            d20class.child(level_i).safeload()
+            for spell_i in range(d20class.child(level_i).rowCount()):
+                d20class.child(level_i).child(spell_i).checkstate = 0
+        self.refreshViews()
+
+    def selectAllLevel(self):
+        levelIndex = self.levellist.selectionModel().currentIndex()
+        levelIndex = self.filtermodel.mapToSource(levelIndex)
+        level = self.model.itemFromIndex(levelIndex)
+        level.safeload()
+        for spell_i in range(level.rowCount()):
+                level.child(spell_i).checkstate = 2
+        self.refreshViews()
+
+    def selectAllClass(self):
+        classIndex = self.d20classlist.selectionModel().currentIndex()
+        classIndex = self.filtermodel.mapToSource(classIndex)
+        d20class = self.model.itemFromIndex(classIndex)
+        for level_i in range(d20class.rowCount()):
+            d20class.child(level_i).safeload()
+            for spell_i in range(d20class.child(level_i).rowCount()):
+                d20class.child(level_i).child(spell_i).checkstate = 2
+        self.refreshViews()
 
 
     def new(self):
