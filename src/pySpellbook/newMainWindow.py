@@ -557,6 +557,7 @@ class SpellBookWindow(QtGui.QMainWindow):
                 self.exportBookAction.setText("&Export to PDF...")
                 self.updateWindowName()
                 self.model.clearChecked()
+                self.refreshViews()
                 self.modified = False
                 self.spelllist.setHidden(True)
                 self.levellist.setHidden(True)
@@ -570,6 +571,7 @@ class SpellBookWindow(QtGui.QMainWindow):
             self.pdffilename = None
             self.updateWindowName()
             self.model.clearChecked()
+            self.refreshViews()
 
     def updateWindowName(self):
         if self.filename:
