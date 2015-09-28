@@ -1,0 +1,289 @@
+#!/usr/bin/env python3
+import sys
+try:
+    from pySpellbook.importTools import Importer
+except ImportError:
+    sys.path.append("..")
+    from pySpellbook.importTools import Importer
+try:
+    from pyquery import PyQuery as pq
+except ImportError:
+    print("The importscript depends on the python library \"pyquery\". Please install pyquery.", file=sys.stderr)
+    sys.exit(1)
+import re
+
+class D20SRDImporter(Importer):
+    def __init__(self, base_url):
+        super().__init__("/indexes/spellLists.htm", base_url=base_url)
+
+    def getBook(self, li):
+        if li.find("a").eq(0).text() == "Ablative Barrier":
+            return "Ultimate Combat"
+        return self.short2book[li.attr("class").split(" ")[-1][5:]]
+
+    def parseSpell(self, link, ispell):
+        spellpage = pq(filename=self.base_url + link)
+        ispell['name'] = spellpage("h1").text()
+        school_group = re.match("(?P<school>[^ ]*)(?: \( (?P<subschool>.*?) \))?(?: \[ (?P<descriptors>.*?) \])?", spellpage('h4').text())
+        ispell['school'] = school_group.group("school")
+        ispell['subschool'] = school_group.group("subschool")
+        ispell['descriptors'] = school_group.group("descriptors")
+
+        spell_ = {}
+        for row in spellpage("table.statBlock tr").items():
+            key = row("th").text().replace(":","").strip()
+            value = row("td").text()
+            if key == "Level":
+                pass
+            elif key == "Components" or key == "Component":
+                for comp in value.replace(" ","").replace("(","").replace("/", ',').split(','):
+                    if comp.startswith("M"):
+                        ispell["material"] = True
+                    elif comp.startswith("V"):
+                        ispell["verbal"] = True
+                    elif comp == "S":
+                        ispell["somatic"] = True
+                    elif comp.startswith("F"):
+                        ispell["arcane_focus"] = True
+                    elif comp == "DF":
+                        ispell["divine_focus"] = True
+                    elif comp.startswith("XP"):
+                        ispell["xp_costs"] = True
+            else:
+                spell_[key] = value
+
+        sourceTargetDict = {
+                            "Casting Time": "cast_time",
+                            "Range": "range",
+                            "Area": "area",
+                            "Effect": "effect",
+                            "Target": "target",
+                            "Targets": "target",
+                            "Target/Effect": "target",
+                            "Target / Effect": "target",
+                            "Target or Area": "target",
+                            "Target or Targets": "target",
+                            "Target, Effect, or Area": "target",
+                            "Target , Effect , or Area": "target",
+                            "Target, Effect, Area": "target",
+                            "Area or Target": "target",
+                            "Duration": "duration",
+                            "Spell Resistance": "spell_res",
+                            "Saving Throw": "save"
+                        }
+        for s, t in sourceTargetDict.items():
+            if s in spell_.keys():
+                ispell[t] = spell_[s]
+
+        startelem = spellpage("table.statBlock")
+        elem = startelem.next()
+        text = ""
+        while not elem.is_(".footer"):
+            text = text + elem.html()
+            elem = elem.next()
+        ispell["text"] = text
+        return ispell
+
+    """
+        while not parse_end:
+            elem = elem.next()
+            if elem.is_(".stat-block-1") or elem.is_("#school")\
+                    or elem.is_("#range") or elem.is_("#target"):
+                stat_blocks.append(elem)
+                continue
+            if elem.is_(".stat-block-title") or\
+                    elem.is_(".footer"):
+                break
+            if elem.html() == None:
+                continue
+            text_blocks.append(elem)
+        for block in stat_blocks:
+            items = block.find("b, strong").items()
+            for item in items:
+                label = item.text().strip()
+                value_match = re.match(".*?(<b>|<strong>)\s*(?:<a[^>]*>)?\s*%s\s*(?:</a>)?\s*(</b>|</strong>)(?::)?\s*(<span class=\"body-copy-indent-char\">|)?(?P<value>([^(]*\([^)]*\) \[[^;]*|[^(]*\([^)]*\)|[^;]*))" % label, self.stripLinks(block.html()))
+                value = value_match.group("value").strip()
+                spell_[label] = value
+        # Fix Saves:
+        def replace(old, new, sdict):
+            if old in sdict.keys():
+                sdict[new] = sdict[old]
+                del(sdict[old])
+        replace("SR", "Spell Resistance", spell_)
+        replace("Saving throw", "Saving Throw", spell_)
+        replace("Save", "Saving Throw", spell_)
+        replace("Casting time", "Casting Time", spell_)
+        if "Casting" in spell_.keys(): #Visions of Hell
+            if spell_["Casting"].strip().startswith("Time"):
+                spell_["Casting"] = spell_["Casting"].strip()[4:].strip()
+            spell_["Casting Time"] = spell_["Casting"]
+            del(spell_["Casting"])
+        if "Saving" in spell_.keys():
+            if spell_["Saving"].strip().startswith("Throw"):
+                spell_["Saving"] = spell_["Saving"].strip()[5:].strip()
+            spell_["Saving Throw"] = spell_["Saving"]
+            del(spell_["Saving"])
+
+        if "Saving Throw" in spell_.keys():
+            spell_["Saving Throw"] = re.sub("(<.*|;.*)","",spell_["Saving Throw"]).strip()
+        if "School" in spell_.keys():
+            school_match = re.search("(?P<school>[^ ]*)(?: \(\s*(?:<.*?>)?\s*(?P<subschool>[^)]*?)\s*(?:<.*?>)?\s*\))?(?: \[(?P<descriptors>[^\]]*)\])?",  spell_['School']);
+            spell['school'] = school_match.group("school").lower().replace(":","").capitalize()
+            spell['subschool'] = school_match.group("subschool")
+            spell['descriptors'] = school_match.group("descriptors")
+        if "Components" in spell_.keys() or "Component" in spell_.keys():
+            clist = spell_["Components"] if "Components" in spell_.keys() else spell_["Component"]
+            if "(" in clist:
+                component_match = re.match("(?P<clist>[^(]*)\((?P<mtext>[^)]*)\)", clist)
+                clist = component_match.group("clist")
+                spell["material_text"] = component_match.group("mtext")
+            clist = clist.replace("/",",")
+            for component in [c.strip() for c in clist.split(',')]:
+                if component.startswith('M'):
+                    spell['material'] = True
+                elif component == 'V':
+                    spell['verbal'] = True
+                elif component == 'S':
+                    spell['somatic'] = True
+                elif component == 'AF':
+                    spell['arcane_focus'] = True
+                elif component == 'DF':
+                    spell['divine_focus'] = True
+        # Check if other labels are recognized:
+        known_labels = ["School", "Component", "Components", "Level"] + list(sourceTargetDict.keys())
+        for l in known_labels:
+            if l in spell_.keys():
+                del spell_[l]
+        if list(spell_.keys()):
+            print(spell_name, spell_.keys())
+            sys.exit(1)
+        spell['text'] = "".join(["<p>%s</p>" % self.stripLinks(p.html()) for p in text_blocks])
+        spell['name'] = spell_name
+        spell['rulebook'] = ispell['rulebook']
+        spell['system'] = "D20SRD"
+        spell['classes'] = ispell['classes']
+        if not spell['text']:
+            print("EMPTYTEXT %s" % spell)
+            sys.exit(1)
+        return spell
+    """
+
+    def listSpellIndex(self):
+        index = pq(filename=self.base_url + self.root)
+        mapping_a = [(a.attr('href'), a.text().replace(" Spells","")) for a in list(index('h2 a').items())[1:] if a.text() != "Cleric Domains"]
+        mapping = []
+
+        for l,c in mapping_a:
+            if '/' in c:
+                for c2 in c.split("/"):
+                    mapping.append((l,c2))
+            else:
+                mapping.append((l,c))
+
+        for link, name in mapping:
+            class_page = pq(filename=self.base_url + link)
+            print(name)
+            for level_elem in class_page("h3").items():
+                try:
+                    level = int(level_elem.text()[0])
+                except:
+                    continue
+                print("\tLevel %s" % level)
+                if name == "Wizard" or name == "Sorcerer":
+                    elem = level_elem.next()
+                    while not elem.is_("h3") and not elem.is_(".footer"):
+                        if elem.is_("ul"):
+                            for spell in elem('strong .spell').items():
+                                spell_name = spell.text()
+                                spell_link = spell.attr("href")
+                                print("\t\t" + spell_name)
+                                yield (spell_link, {'name': spell_name,
+                                        'rulebook': "D20SRD",
+                                        'system': "D&D 3.5",
+                                        'classes': [(name, level)],
+                                        })
+                        elem = elem.next()
+
+                else:
+                    spell_list = level_elem.next()
+                    for spell in spell_list('strong .spell').items():
+                        spell_name = spell.text()
+                        spell_link = spell.attr("href")
+                        print("\t\t" + spell_name)
+                        yield (spell_link, {'name': spell_name,
+                                'rulebook': "D20SRD",
+                                'system': "D&D 3.5",
+                                'classes': [(name, level)],
+                                })
+
+    def postParse(self):
+        for spell in self._spells:
+            if not 'school' in spell.keys() or not spell['school']:
+                if spell['name'].endswith("Communal") or spell['name'].endswith("Mass") or spell['name'].endswith("Greater") or spell['name'].endswith("Lesser") or spell['name'].endswith("Improved"):
+                    parent_spell = self.findSpellByName(spell['name'].split(",")[0].strip())
+                    spell['school'] = parent_spell['school']
+                    if 'subschool' in parent_spell.keys():
+                        spell['subschool'] = parent_spell['subschool']
+                else:
+                    print("ERROR: NO SCHOOL %s" % spell['name'])
+                    sys.exit(1)
+
+    def fixBloodrager(self):
+        # The Bloodrager spelllist in SpellListIndexes seem way to short. These
+        # are manually copied from... and manually fixed:
+        # http://paizo.com/pathfinderRPG/prd/advancedClassGuide/classes/bloodrager.html
+        lvl1 = [self.normalize(s) for s in ["Blade lash", "blurred movement", "break", "burning hands", "cause fear", "chill touch", "color spray", "corrosive touch", "ear-piercing scream", "endure elements",
+                "enlarge person", "expeditious retreat", "feather fall", "flare burst", "frostbite", "hydraulic push", "icicle dagger", "jump", "line in the sand", "long arm", "mage armor",
+                "magic missile", "magic weapon", "marid's mastery", "mirror strike", "mount", "mudball", "phantom blood", "protection from chaos", "protection from evil", "protection from good",
+                "protection from law", "ray of enfeeblement", "ray of sickening", "reduce person", "returning weapon", "shadow weapon", "shield", "shock shield", "shocking grasp", "stone fist",
+                "stone shield", "strong wings", "sundering shards", "thunderstomp", "touch of combustion", "touch of gracelessness", "touch of the sea", "true strike", "unerring weapon", "warding weapon",
+                "wave shield", "web bolt", "windy escape", "winter feathers"]]
+        lvl2 = [self.normalize(s) for s in ["Ablative barrier", "acid arrow", "adhesive blood", "animal aspect", "bear's endurance", "blindness/deafness", "blood armor", "blood blaze", "boiling blood", "brow gasher",
+                "bullet shield", "bull's strength", "burning gaze", "cat's grace", "certain grip", "daze monster", "death from below", "defensive shock", "delay pain", "disfiguring touch",
+                "dust of twilight", "eagle's splendor", "elemental touch", "extreme flexibility", "false life", "fire breath", "flaming sphere", "frigid touch", "ghoul touch", "glitterdust",
+                "gust of wind", "gusting sphere", "imbue with elemental might", "mirror image", "molten orb", "protection from arrows", "pyrotechnics", "resist energy", "scorching ray",
+                "see invisibility", "shatter", "slipstream", "sonic scream", "spider climb", "steal breath", "stone call", "stone discus", "touch of idiocy", "unshakable chill"]]
+        lvl3 = [self.normalize(s) for s in ["Air geyser", "animal aspect, greater", "aqueous orb", "beast shape I", "blood biography", "blood scent", "burrow", "burst of speed", "chain of perdition", "cloak of winds",
+                "countless eyes", "draconic reservoir", "elemental aura", "eruptive pustules", "excruciating deformation", "fire trail", "fireball", "firestream", "flame arrow", "fly",
+                "force hook charge", "force punch", "gloomblind bolts", "haste", "heroism", "hold person", "hostile levitation", "howling agony", "hydraulic torrent", "keen edge",
+                "lightning bolt", "locate weakness", "magic weapon, greater", "monstrous physique I", "pain strike", "paragon surge", "phantom steed", "protection from energy", "rage",
+                "raging rubble", "ray of exhaustion", "resinous skin", "silver darts", "sleet storm", "slow", "stinking cloud", "thunderstomp, greater", "twilight knife", "undead anatomy I",
+                "vampiric touch", "versatile weapon", "vision of hell", "water breathing", "wind wall"]]
+        lvl4 = [self.normalize(s) for s in ["Absorbing inhalation", "ball lightning", "beast shape II", "bestow curse", "black tentacles", "calcific touch", "confusion", "contagion", "crushing despair", "detonate",
+                "dragon's breath", "earth glide", "elemental body I", "enervation", "enlarge person, mass", "false life, greater", "fear", "fire shield", "firefall", "flaming sphere, greater",
+                "ghost wolf", "hellmouth lash", "ice storm", "monstrous physique II", "moonstruck", "pellet blast", "phantasmal killer", "reduce person, mass", "ride the waves", "river of wind",
+                "shocking image", "shout", "slow", "stoneskin", "telekinetic charge", "touch of slime", "vermin shape I", "vitriolic mist", "volcanic storm", "wall of fire", "wall of ice",
+                "wall of sound", "wreath of blades"]]
+        for spell in self._spells:
+            if self.normalize(spell["name"]) in list(lvl1):
+                if not ("Bloodrager", 1) in spell["classes"]:
+                    spell["classes"].append(("Bloodrager", 1))
+                lvl1.remove(self.normalize(spell["name"]))
+        for spell in self._spells:
+            if self.normalize(spell["name"]) in list(lvl2):
+                if not ("Bloodrager", 2) in spell["classes"]:
+                    spell["classes"].append(("Bloodrager", 2))
+                lvl2.remove(self.normalize(spell["name"]))
+        for spell in self._spells:
+            if self.normalize(spell["name"]) in list(lvl3):
+                if not ("Bloodrager", 3) in spell["classes"]:
+                    spell["classes"].append(("Bloodrager", 3))
+                lvl3.remove(self.normalize(spell["name"]))
+        for spell in self._spells:
+            if self.normalize(spell["name"]) in list(lvl4):
+                if not ("Bloodrager", 4) in spell["classes"]:
+                    spell["classes"].append(("Bloodrager", 4))
+                lvl4.remove(self.normalize(spell["name"]))
+        if lvl1:
+            print(lvl1)
+        if lvl2:
+            print(lvl2)
+        if lvl3:
+            print(lvl3)
+        if lvl4:
+            print(lvl4)
+
+if __name__ == "__main__":
+    D20SRDImporter(sys.argv[1]).save(sys.argv[2])
+
+
