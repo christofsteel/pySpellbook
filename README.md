@@ -49,7 +49,7 @@ Either by [hand] (https://github.com/christofsteel/pySpellbook/wiki/generateData
 
 * Pathfinder PRD [Download] (https://christofsteel.github.io/pySpellbook/datasets/pathfinder-20150914.json)
 * Pathfinder DPRD \[German\] [Download] (https://christofsteel.github.io/pySpellbook/datasets/pathfinderDE-20150914.json)
-* D&D 3.5 SRD (to be added)
+* D&D 3.5 SRD [Download] (https://christofsteel.github.io/pySpellbook/datasets/d20srd-20150928.json)
 
 ## Licenses
 The text of every license can be found under LICENSES.

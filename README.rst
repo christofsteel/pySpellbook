@@ -17,7 +17,36 @@ rulebook, school/subschool, descriptor and fulltextsearch.
 How to install?
 ---------------
 
-Simply via
+Windows
+~~~~~~~
+
+Download the current release from [Releases]
+(https://github.com/christofsteel/pySpellbook/releases)
+
+Mac OSX
+~~~~~~~
+
+Download the current release from [Releases]
+(https://github.com/christofsteel/pySpellbook/releases)
+
+Linux (Ubuntu/Debian)
+~~~~~~~~~~~~~~~~~~~~~
+
+See https://launchpad.net/~christofsteel/+archive/ubuntu/pyspellbook for
+instructions on how to add the PPA to your system. Debian users can pick
+any release, they contain the same files anyway.
+
+Linux (Archlinux)
+~~~~~~~~~~~~~~~~~
+
+You can install ``pySpellbook`` from the [AUR]
+(http://aur.archlinux.org)
+
+Linux (Other)
+~~~~~~~~~~~~~
+
+If you are on linux and have python 3 and pip installed, then install it
+via
 
 ::
 
@@ -51,5 +80,5 @@ import a dataset available here:
    (https://christofsteel.github.io/pySpellbook/datasets/pathfinder-20150914.json)
 -  Pathfinder DPRD [German] [Download]
    (https://christofsteel.github.io/pySpellbook/datasets/pathfinderDE-20150914.json)
--  D&D 3.5 SRD (to be added)
-
+-  D&D 3.5 SRD [Download]
+   (https://christofsteel.github.io/pySpellbook/datasets/d20srd-20150928.json)
