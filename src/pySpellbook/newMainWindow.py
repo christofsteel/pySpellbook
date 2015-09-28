@@ -5,6 +5,7 @@ import os
 import json
 import sys
 import urllib.request
+import subprocess
 from distutils.version import LooseVersion
 
 import pySpellbook.bw_icons_rc as icons
@@ -874,6 +875,16 @@ class SpellBookWindow(QtGui.QMainWindow):
             self.pdffilename = filename
             self.exportBookAction.setText("Export to %s" % os.path.basename(self.pdffilename))
             self.generateBook(filename)
+            if self.config["backend"] != "HTML":
+                 ans = QtGui.QMessageBox.question(self, "Open book", "Open pdf in external viewer?", QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+                 if ans == QtGui.QMessageBox.Yes:
+                     if sys.platform == "win32":
+                         os.startfile(self.pdffilename)
+                     elif sys.platform == "darwin":
+                         subprocess.call(["open", self.pdffilename])
+                     else:
+                         subprocess.call(["xdg-open", self.pdffilename])
+
 
     def generateBook(self, filename):
         g = HTMLGenerator(self.model, self.spellBookName, self.spellBookAuthor, parent=self)
