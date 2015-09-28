@@ -932,16 +932,19 @@ class SpellBookWindow(QtGui.QMainWindow):
         if filename:
             self.pdffilename = filename
             self.exportBookAction.setText("Export to %s" % os.path.basename(self.pdffilename))
-            self.generateBook(filename)
-            if self.config["backend"] != "HTML":
-                 ans = QtGui.QMessageBox.question(self, "Open book", "Open pdf in external viewer?", QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
-                 if ans == QtGui.QMessageBox.Yes:
-                     if sys.platform == "win32":
-                         os.startfile(self.pdffilename)
-                     elif sys.platform == "darwin":
-                         subprocess.call(["open", self.pdffilename])
-                     else:
-                         subprocess.call(["xdg-open", self.pdffilename])
+            try:
+                self.generateBook(filename)
+                if self.config["backend"] != "HTML":
+                    ans = QtGui.QMessageBox.question(self, "Open book", "Open pdf in external viewer?", QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+                    if ans == QtGui.QMessageBox.Yes:
+                        if sys.platform == "win32":
+                            os.startfile(self.pdffilename)
+                        elif sys.platform == "darwin":
+                            subprocess.call(["open", self.pdffilename])
+                        else:
+                            subprocess.call(["xdg-open", self.pdffilename])
+            except TypeError:
+                QtGui.QMessageBox.warning(self, "Something went wrong", "Could not create %s, please check export settings." % filename)
 
 
     def generateBook(self, filename):
