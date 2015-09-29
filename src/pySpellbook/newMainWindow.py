@@ -73,6 +73,9 @@ class SpellBookHandler:
 
 class SpellBookWindow(QtGui.QMainWindow):
     def updateRecents(self):
+        if self.config["recents"] == []:
+            self.config["recents"] = [self.filename]
+            return
         if self.filename != self.config["recents"][0]:
             if self.filename in self.config["recents"]:
                 self.config["recents"].remove(self.filename)
@@ -475,7 +478,7 @@ class SpellBookWindow(QtGui.QMainWindow):
             for spell in s_list:
                 if spell['name'] == stuple[0] and spell['system'] == stuple[1] and spell['rulebook'] == stuple[2]:
                     return spell
-        filename, filters = QtGui.QFileDialog.getSaveFileName()
+        filename, filters = QtGui.QFileDialog.getSaveFileName(options=QtGui.QFileDialog.DontUseNativeDialog)
         if filename:
             with open(filename, 'w') as f:
                 spell_list = []
@@ -527,7 +530,7 @@ class SpellBookWindow(QtGui.QMainWindow):
 
 
     def importDB(self):
-        filename, filters = QtGui.QFileDialog.getOpenFileName()
+        filename, filters = QtGui.QFileDialog.getOpenFileName(options=QtGui.QFileDialog.DontUseNativeDialog)
         if filename:
             with open(filename) as f:
                 spells = json.load(f)
@@ -919,7 +922,7 @@ class SpellBookWindow(QtGui.QMainWindow):
             msgBox.setDefaultButton(QtGui.QMessageBox.Yes)
             ret = msgBox.exec_()
             if ret == QtGui.QMessageBox.No:
-                filename, filters = QtGui.QFileDialog.getOpenFileName(self, dir=directory, filter=self.tr("Spellbooks (*.book);;All Files (*)"))
+                filename, filters = QtGui.QFileDialog.getOpenFileName(self, dir=directory, filter=self.tr("Spellbooks (*.book);;All Files (*)"), options=QtGui.QFileDialog.DontUseNativeDialog)
                 if filename:
                     SpellBookHandler.open(filename, self)
                     self.modified = False
@@ -931,7 +934,7 @@ class SpellBookWindow(QtGui.QMainWindow):
             elif ret == QtGui.QMessageBox.Yes:
                 self.saveBook()
         else:
-            filename, filters = QtGui.QFileDialog.getOpenFileName(self, dir=directory, filter=self.tr("Spellbooks (*.book);;All Files (*)"))
+            filename, filters = QtGui.QFileDialog.getOpenFileName(self, dir=directory, filter=self.tr("Spellbooks (*.book);;All Files (*)"), options=QtGui.QFileDialog.DontUseNativeDialog)
             if filename:
                 SpellBookHandler.open(filename, self)
                 self.modified = False
@@ -945,8 +948,14 @@ class SpellBookWindow(QtGui.QMainWindow):
         directory = os.path.expanduser("~")
         if self.filename:
             directory = os.path.dirname(self.filename)
-        filename, filters = QtGui.QFileDialog.getSaveFileName(self, dir=directory, filter=self.tr("Spellbooks (*.book);;All Files (*)"))
-        if filename:
+        saveDialog = QtGui.QFileDialog(self, "Save")
+        saveDialog.setNameFilter("Spellbooks (*.book)")
+        saveDialog.setDirectory(directory)
+        saveDialog.setAcceptMode(QtGui.QFileDialog.AcceptSave)
+        saveDialog.setDefaultSuffix("book")
+        saveDialog.setFileMode(QtGui.QFileDialog.AnyFile)
+        if saveDialog.exec_():
+            filename = saveDialog.selectedFiles()[0]
             SpellBookHandler.save(filename, self)
             self.modified = False
             self.filename = filename
@@ -959,7 +968,15 @@ class SpellBookWindow(QtGui.QMainWindow):
         if self.filename:
             filename = self.filename
         else:
-            filename, filters = QtGui.QFileDialog.getSaveFileName(self, dir=os.path.expanduser("~"), filter=self.tr("Spellbooks (*.book);;All Files (*)"))
+            saveDialog = QtGui.QFileDialog(self, "Save")
+            saveDialog.setNameFilter("Spellbooks (*.book)")
+            saveDialog.setAcceptMode(QtGui.QFileDialog.AcceptSave)
+            saveDialog.setDefaultSuffix("book")
+            saveDialog.setFileMode(QtGui.QFileDialog.AnyFile)
+            if saveDialog.exec_():
+                filename = saveDialog.selectedFiles()[0]
+            else:
+                return
         if filename:
             SpellBookHandler.save(filename, self)
             self.modified = False
@@ -982,7 +999,7 @@ class SpellBookWindow(QtGui.QMainWindow):
         directory = os.path.expanduser("~")
         if self.pdffilename:
             directory = os.path.dirname(self.pdffilename)
-        filename, filters = QtGui.QFileDialog.getSaveFileName(self, dir=directory, filter=ffilter)
+        filename, filters = QtGui.QFileDialog.getSaveFileName(self, dir=directory, filter=ffilter, options=QtGui.QFileDialog.DontUseNativeDialog)
         if filename:
             self.pdffilename = filename
             self.exportBookAction.setText(self.tr("Export to %s") % os.path.basename(self.pdffilename))
