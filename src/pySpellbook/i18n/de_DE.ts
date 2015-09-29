@@ -94,7 +94,7 @@
     <message>
         <location filename="../addSpellWindow.py" line="355"/>
         <source>S</source>
-        <translation>G</translation>
+        <translation>S</translation>
     </message>
     <message>
         <location filename="../addSpellWindow.py" line="356"/>
@@ -109,7 +109,7 @@
     <message>
         <location filename="../addSpellWindow.py" line="358"/>
         <source>DF</source>
-        <translation>GF</translation>
+        <translation>DF</translation>
     </message>
     <message>
         <location filename="../addSpellWindow.py" line="359"/>
