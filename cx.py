@@ -18,7 +18,7 @@ buildOptions = dict(packages = ["pySpellbook",
                                 "appdirs",
                                 "jinja2",
                                 "sqlalchemy"],
-                    include_files = ["src/pySpellbook/templates/", "LICENSES/", "LICENSE.txt", "README.md"],
+                    include_files = ["src/pySpellbook/templates/", "LICENSES/", "LICENSE.txt", "README.md", "src/pySpellbook/i18n/"],
                     include_msvcr = True,
                     excludes = [])
 
