@@ -20,7 +20,7 @@ class AddSpellWindow(object):
         self.descriptors_list.takeItem(row)
 
     def addClass(self):
-        classlevel, ok = QtGui.QInputDialog.getText(self.Dialog, self.tr("Add Class"), self.tr("Enter Class and Level"))
+        classlevel, ok = QtGui.QInputDialog.getText(self.Dialog, self.Dialog.tr("Add Class"), self.Dialog.tr("Enter Class and Level"))
         if ok:
             tpl = classlevel.split(' ')
             if len(tpl) == 2 and tpl[1].isdigit:
