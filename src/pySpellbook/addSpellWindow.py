@@ -11,7 +11,7 @@ from PySide import QtCore, QtGui
 
 class AddSpellWindow(object):
     def addDescriptor(self):
-        desc, ok = QtGui.QInputDialog.getText(self.Dialog, "Add Descriptor", "Enter Descriptor")
+        desc, ok = QtGui.QInputDialog.getText(self.Dialog, self.tr("Add Descriptor"), self.tr("Enter Descriptor"))
         if ok:
             self.descriptors_list.addItem(desc)
 
@@ -20,7 +20,7 @@ class AddSpellWindow(object):
         self.descriptors_list.takeItem(row)
 
     def addClass(self):
-        classlevel, ok = QtGui.QInputDialog.getText(self.Dialog, "Add Class", "Enter Class and Level")
+        classlevel, ok = QtGui.QInputDialog.getText(self.Dialog, self.tr("Add Class"), self.tr("Enter Class and Level"))
         if ok:
             tpl = classlevel.split(' ')
             if len(tpl) == 2 and tpl[1].isdigit:

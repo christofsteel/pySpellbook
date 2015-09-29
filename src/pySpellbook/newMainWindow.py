@@ -91,8 +91,8 @@ class SpellBookWindow(QtGui.QMainWindow):
         def inner():
             if self.isModified():
                 msgBox = QtGui.QMessageBox()
-                msgBox.setText("The spellbook has been modified.")
-                msgBox.setInformativeText("Do you want to save your changes?")
+                msgBox.setText(self.tr("The spellbook has been modified."))
+                msgBox.setInformativeText(self.tr("Do you want to save your changes?"))
                 msgBox.setStandardButtons(QtGui.QMessageBox.Yes | QtGui.QMessageBox.No | QtGui.QMessageBox.Cancel)
                 msgBox.setDefaultButton(QtGui.QMessageBox.Yes)
                 ret = msgBox.exec_()
@@ -300,82 +300,82 @@ class SpellBookWindow(QtGui.QMainWindow):
         self.menuBar = QtGui.QMenuBar(self) if sys.platform != "darwin" else QtGui.QMenuBar()
         self.setMenuBar(self.menuBar)
         self.filterSpellsEdit = QtGui.QLineEdit()
-        self.filterSpellsEdit.setPlaceholderText("Search...")
-        self.fileMenu = self.menuBar.addMenu("&File")
-        self.spellBookMenu = self.menuBar.addMenu("Spell&book")
-        self.dbMenu = self.menuBar.addMenu("&Database")
-        self.filterMenu = self.menuBar.addMenu("F&ilter")
-        self.filterSystemMenu = self.filterMenu.addMenu("&Rulebooks")
-        self.filterSchoolMenu = self.filterMenu.addMenu("&School")
-        self.filterSubschoolMenu = self.filterMenu.addMenu("Su&bschool")
-        self.filterDescriptorMenu = self.filterMenu.addMenu("&Descriptor")
-        self.filterSelectedAction = self.filterMenu.addAction("Show &only selected")
+        self.filterSpellsEdit.setPlaceholderText(self.tr("Search..."))
+        self.fileMenu = self.menuBar.addMenu(self.tr("&File"))
+        self.spellBookMenu = self.menuBar.addMenu(self.tr("Spell&book"))
+        self.dbMenu = self.menuBar.addMenu(self.tr("&Database"))
+        self.filterMenu = self.menuBar.addMenu(self.tr("F&ilter"))
+        self.filterSystemMenu = self.filterMenu.addMenu(self.tr("&Rulebooks"))
+        self.filterSchoolMenu = self.filterMenu.addMenu(self.tr("&School"))
+        self.filterSubschoolMenu = self.filterMenu.addMenu(self.tr("Su&bschool"))
+        self.filterDescriptorMenu = self.filterMenu.addMenu(self.tr("&Descriptor"))
+        self.filterSelectedAction = self.filterMenu.addAction(self.tr("Show &only selected"))
         self.filterSelectedAction.setCheckable(True)
-        self.newAction = QtGui.QAction("&New", self)
+        self.newAction = QtGui.QAction(self.tr("&New"), self)
         self.newAction.setIcon(QtGui.QIcon.fromTheme("document-new", QtGui.QIcon(":icons/document-new.png")))
         self.newAction.setShortcut(QtCore.Qt.CTRL + QtCore.Qt.Key_N)
         self.fileMenu.addAction(self.newAction)
         self.openAction = QtGui.QAction(self)
-        self.openAction.setText("&Open...")
+        self.openAction.setText(self.tr("&Open..."))
         self.openAction.setIcon(QtGui.QIcon.fromTheme("document-open", QtGui.QIcon(":icons/document-open.png")))
         self.openAction.setShortcut(QtCore.Qt.CTRL + QtCore.Qt.Key_O)
         self.fileMenu.addAction(self.openAction)
-        self.openRecentsMenu = self.fileMenu.addMenu("Open &Recents...")
+        self.openRecentsMenu = self.fileMenu.addMenu(self.tr("Open &Recents..."))
         self.fileMenu.addSeparator()
         self.saveAction = QtGui.QAction(self)
-        self.saveAction.setText("&Save...")
+        self.saveAction.setText(self.tr("&Save..."))
         self.saveAction.setIcon(QtGui.QIcon.fromTheme("document-save", QtGui.QIcon(":icons/document-save.png")))
         self.saveAction.setShortcut(QtCore.Qt.CTRL + QtCore.Qt.Key_S)
         self.fileMenu.addAction(self.saveAction)
         self.saveasAction = QtGui.QAction(self)
         self.saveasAction.setIcon(QtGui.QIcon.fromTheme("document-save-as", QtGui.QIcon(":icons/document-save-as.png")))
-        self.saveasAction.setText("&Save As...")
+        self.saveasAction.setText(self.tr("&Save As..."))
         self.fileMenu.addAction(self.saveasAction)
         self.fileMenu.addSeparator()
-        self.rerunWizardAction = self.fileMenu.addAction("Run Wizard")
+        self.rerunWizardAction = self.fileMenu.addAction(self.tr("Run Wizard"))
         self.fileMenu.addSeparator()
         self.quitAction = QtGui.QAction(self)
         self.quitAction.setIcon(QtGui.QIcon.fromTheme("application-exit", QtGui.QIcon(":icons/application-exit.png")))
-        self.quitAction.setText("&Quit")
+        self.quitAction.setText(self.tr("&Quit"))
         self.quitAction.setShortcut(QtCore.Qt.CTRL + QtCore.Qt.Key_Q)
         self.fileMenu.addAction(self.quitAction)
 
-        self.setNameAction = QtGui.QAction("Set &title...", self)
+        self.setNameAction = QtGui.QAction(self.tr("Set &title..."), self)
         self.spellBookMenu.addAction(self.setNameAction)
-        self.setAuthorAction = QtGui.QAction("Set &author...", self)
+        self.setAuthorAction = QtGui.QAction(self.tr("Set &author..."), self)
         self.spellBookMenu.addAction(self.setAuthorAction)
         #self.selectImageAction = QtGui.QAction("Select &Image...", self)
         #self.spellBookMenu.addAction(self.selectImageAction)
         self.spellBookMenu.addSeparator()
         #self.selectTemplateAction = QtGui.QAction("Select &Template...", self)
         #self.spellBookMenu.addAction(self.selectTemplateAction)
-        self.configExportAction = self.spellBookMenu.addAction("&Configure export...")
+        self.configExportAction = self.spellBookMenu.addAction(self.tr("&Configure export..."))
         self.configExportAction.setIcon(QtGui.QIcon.fromTheme("preferences-system", QtGui.QIcon(":icons/preferences-system.png")))
         self.spellBookMenu.addSeparator()
-        self.exportBookAction = QtGui.QAction("&Export to PDF...", self)
+        self.exportBookAction = QtGui.QAction(self.tr("&Export to PDF..."), self)
         self.exportBookAction.setIcon(QtGui.QIcon.fromTheme("office-book", QtGui.QIcon(":icons/office-book.png")))
         self.exportBookAction.setShortcut(QtCore.Qt.CTRL + QtCore.Qt.Key_E)
         self.spellBookMenu.addAction(self.exportBookAction)
-        self.exportAsBookAction = QtGui.QAction("Export to PDF &as...", self)
+        self.exportAsBookAction = QtGui.QAction(self.tr("Export to PDF &as..."), self)
         self.spellBookMenu.addAction(self.exportAsBookAction)
 
-        self.addSpellAction = QtGui.QAction("&Add spell...", self)
+        self.addSpellAction = QtGui.QAction(self.tr("&Add spell..."), self)
         self.addSpellAction.setIcon(QtGui.QIcon.fromTheme("list-add", QtGui.QIcon(":icons/list-add.png")))
         self.dbMenu.addAction(self.addSpellAction)
         self.dbMenu.addSeparator()
-        self.importDBAction = QtGui.QAction("&Import dataset...", self)
+        self.importDBAction = QtGui.QAction(self.tr("&Import dataset..."), self)
         self.dbMenu.addAction(self.importDBAction)
-        self.exportDBAction = self.dbMenu.addAction("&Export dataset...")
-        self.exportSelectedDBAction = self.dbMenu.addAction("Export &selected dataset..")
+        self.exportDBAction = self.dbMenu.addAction(self.tr("&Export dataset..."))
+        self.exportSelectedDBAction = self.dbMenu.addAction(self.tr("Export &selected dataset.."))
         self.dbMenu.addSeparator()
-        self.clearDBAction = self.dbMenu.addAction("Clear database")
+        self.clearDBAction = self.dbMenu.addAction(self.tr("Clear database"))
 
-        self.selectAllLevelAction = QtGui.QAction("Select All", self)
-        self.selectAllClassAction = QtGui.QAction("Select All", self)
-        self.deselectAllLevelAction = QtGui.QAction("Deselect All", self)
-        self.deselectAllClassAction = QtGui.QAction("Deselect All", self)
-        self.editSpellAction = QtGui.QAction("Edit...", self)
-        self.deleteSpellAction = QtGui.QAction("Delete", self)
+        self.selectAllLevelAction = QtGui.QAction(self.tr("Select All"), self)
+        self.selectAllClassAction = QtGui.QAction(self.tr("Select All"), self)
+        self.deselectAllLevelAction = QtGui.QAction(self.tr("Deselect All"), self)
+        self.deselectAllClassAction = QtGui.QAction(self.tr("Deselect All"), self)
+        self.editSpellAction = QtGui.QAction(self.tr("Edit..."), self)
+        self.deleteSpellAction = QtGui.QAction(self.tr("Delete"), self)
         self.spelllist.addAction(self.editSpellAction)
         self.spelllist.addAction(self.deleteSpellAction)
         self.levellist.addAction(self.selectAllLevelAction)
@@ -412,7 +412,7 @@ class SpellBookWindow(QtGui.QMainWindow):
         self.filterSelectedAction.toggled.connect(self.filterSelected)
 
         # Tooolbar
-        self.toolbar = self.addToolBar("Toolbar")
+        self.toolbar = self.addToolBar(self.tr("Toolbar"))
         self.toolbar.setFloatable(False)
         self.toolbar.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
         self.toolbar.addAction(self.newAction)
@@ -452,8 +452,8 @@ class SpellBookWindow(QtGui.QMainWindow):
         self.fillDescriptors()
         self.filename = ""
         self.pdffilename = ""
-        self.spellBookName="New Spellbook"
-        self.spellBookAuthor="Unknown Author"
+        self.spellBookName=self.tr("New Spellbook")
+        self.spellBookAuthor=self.tr("Unknown Author")
         self.modified = False
         self.updateWindowName()
 
@@ -462,7 +462,7 @@ class SpellBookWindow(QtGui.QMainWindow):
             wizard.exec_()
 
     def setUpdate(self):
-        self.updateNotify.setText("<b><a href='https://github.com/christofsteel/pySpellbook/releases'>Update available!</a></b> ")
+        self.updateNotify.setText("<b><a href='https://github.com/christofsteel/pySpellbook/releases'>%s</a></b> " % self.tr("Update available!"))
     def rerunWizard(self):
         wizard = Wizard(self, self.db)
         wizard.exec_()
@@ -518,7 +518,7 @@ class SpellBookWindow(QtGui.QMainWindow):
 
 
     def clearDB(self):
-        ret = QtGui.QMessageBox().critical(self, "Are you sure", "This will delete all spells in your database close your spellbook without saving. Continue?", buttons=QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
+        ret = QtGui.QMessageBox().critical(self, self.tr("Are you sure"), self.tr("This will delete all spells in your database close your spellbook without saving. Continue?"), buttons=QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
         if ret == QtGui.QMessageBox.Yes:
             self.db.clear()
             self.reloadModel()
@@ -531,7 +531,7 @@ class SpellBookWindow(QtGui.QMainWindow):
         if filename:
             with open(filename) as f:
                 spells = json.load(f)
-                pd = QtGui.QProgressDialog("Importing Database", "Abort", 0, len(spells), self)
+                pd = QtGui.QProgressDialog(self.tr("Importing Database"), self.tr("Abort"), 0, len(spells), self)
                 pd.setWindowModality(QtCore.Qt.WindowModal)
                 for i, s in enumerate(spells):
                     pd.setValue(i)
@@ -595,18 +595,18 @@ class SpellBookWindow(QtGui.QMainWindow):
     def new(self):
         if self.isModified():
             msgBox = QtGui.QMessageBox()
-            msgBox.setText("The spellbook has been modified.")
-            msgBox.setInformativeText("Do you want to save your changes?")
+            msgBox.setText(self.tr("The spellbook has been modified."))
+            msgBox.setInformativeText(self.tr("Do you want to save your changes?"))
             msgBox.setStandardButtons(QtGui.QMessageBox.Yes | QtGui.QMessageBox.No | QtGui.QMessageBox.Cancel)
             msgBox.setDefaultButton(QtGui.QMessageBox.Yes)
             ret = msgBox.exec_()
 
             if ret == QtGui.QMessageBox.No:
-                self.spellBookName="New Spellbook"
-                self.spellBookAuthor="Unknown Author"
+                self.spellBookName=self.tr("New Spellbook")
+                self.spellBookAuthor=self.tr("Unknown Author")
                 self.filename = None
                 self.pdffilename = None
-                self.exportBookAction.setText("&Export to PDF...")
+                self.exportBookAction.setText(self.tr("&Export to PDF..."))
                 self.updateWindowName()
                 self.model.clearChecked()
                 self.refreshViews()
@@ -617,8 +617,8 @@ class SpellBookWindow(QtGui.QMainWindow):
             elif ret == QtGui.QMessageBox.Yes:
                 self.saveBook()
         else:
-            self.spellBookName="New Spellbook"
-            self.spellBookAuthor="Unknown Author"
+            self.spellBookName=self.tr("New Spellbook")
+            self.spellBookAuthor=self.tr("Unknown Author")
             self.filename = None
             self.pdffilename = None
             self.updateWindowName()
@@ -627,19 +627,19 @@ class SpellBookWindow(QtGui.QMainWindow):
 
     def updateWindowName(self):
         if self.filename:
-            self.setWindowTitle("PySpellbook - %s by %s (%s)" % (self.spellBookName, self.spellBookAuthor, os.path.basename(self.filename)))
+            self.setWindowTitle("PySpellbook - %s %s %s (%s)" % (self.spellBookName, self.tr("by"), self.spellBookAuthor, os.path.basename(self.filename)))
         else:
-            self.setWindowTitle("PySpellbook - %s by %s (unsaved)" % (self.spellBookName, self.spellBookAuthor))
+            self.setWindowTitle("PySpellbook - %s %s %s (%s)" % (self.spellBookName, self.tr("by"), self.spellBookAuthor, self.tr("unsaved")))
 
     def setName(self):
-        newName, ok = QtGui.QInputDialog.getText(self, "Set title", "Name your spellbook", text=self.spellBookName)
+        newName, ok = QtGui.QInputDialog.getText(self, self.tr("Set title"), self.tr("Name your spellbook"), text=self.spellBookName)
         if ok:
             self.spellBookName = newName
             self.updateWindowName()
             self.modified = True
 
     def setAuthor(self):
-        newAuthor, ok = QtGui.QInputDialog.getText(self, "Set author", "Set the displayed authorname", text=self.spellBookAuthor)
+        newAuthor, ok = QtGui.QInputDialog.getText(self, self.tr("Set author"), self.tr("Set the displayed authorname"), text=self.spellBookAuthor)
         if ok:
             self.spellBookAuthor = newAuthor
             self.updateWindowName()
@@ -727,8 +727,8 @@ class SpellBookWindow(QtGui.QMainWindow):
             escaped_system = system.replace("&", "&&")
             systemMenu = self.filterSystemMenu.addMenu(escaped_system)
             rulebooks = [rulebook.name for rulebook in self.db.list_rulebooks(system)]
-            check_all = systemMenu.addAction("All")
-            uncheck_all = systemMenu.addAction("None")
+            check_all = systemMenu.addAction(self.tr("All"))
+            uncheck_all = systemMenu.addAction(self.tr("None"))
             uncheck_all.triggered.connect(self.uncheck(systemMenu))
             check_all.triggered.connect(self.check(systemMenu))
             systemMenu.addSeparator()
@@ -745,12 +745,12 @@ class SpellBookWindow(QtGui.QMainWindow):
         self.filterDescriptorMenu.clear()
         descriptors = [result.name for result in self.db.list_descriptors()]
         self.beginPauseFilters()
-        check_all = self.filterDescriptorMenu.addAction("All")
-        uncheck_all = self.filterDescriptorMenu.addAction("None")
+        check_all = self.filterDescriptorMenu.addAction(self.tr("All"))
+        uncheck_all = self.filterDescriptorMenu.addAction(self.tr("None"))
         uncheck_all.triggered.connect(self.uncheck(self.filterDescriptorMenu))
         check_all.triggered.connect(self.check(self.filterDescriptorMenu))
         self.filterDescriptorMenu.addSeparator()
-        descriptorAction = self.filterDescriptorMenu.addAction("No Descriptor")
+        descriptorAction = self.filterDescriptorMenu.addAction(self.tr("No Descriptor"))
         descriptorAction.setCheckable(True)
         if not None in self.filterDescriptors:
             descriptorAction.setChecked(True)
@@ -768,12 +768,12 @@ class SpellBookWindow(QtGui.QMainWindow):
         self.filterSubschoolMenu.clear()
         subschools = [result.name for result in self.db.list_subschools()]
         self.beginPauseFilters()
-        check_all = self.filterSubschoolMenu.addAction("All")
-        uncheck_all = self.filterSubschoolMenu.addAction("None")
+        check_all = self.filterSubschoolMenu.addAction(self.tr("All"))
+        uncheck_all = self.filterSubschoolMenu.addAction(self.tr("None"))
         uncheck_all.triggered.connect(self.uncheck(self.filterSubschoolMenu))
         check_all.triggered.connect(self.check(self.filterSubschoolMenu))
         self.filterSubschoolMenu.addSeparator()
-        subschoolAction = self.filterSubschoolMenu.addAction("No Subschool")
+        subschoolAction = self.filterSubschoolMenu.addAction(self.tr("No Subschool"))
         subschoolAction.setCheckable(True)
         subschoolAction.toggled.connect(self.createSubschoolFilter(None))
         if not None in self.filterSubschools:
@@ -791,8 +791,8 @@ class SpellBookWindow(QtGui.QMainWindow):
         self.filterSchoolMenu.clear()
         schools = [result.name for result in self.db.list_schools()]
         self.beginPauseFilters()
-        check_all = self.filterSchoolMenu.addAction("All")
-        uncheck_all = self.filterSchoolMenu.addAction("None")
+        check_all = self.filterSchoolMenu.addAction(self.tr("All"))
+        uncheck_all = self.filterSchoolMenu.addAction(self.tr("None"))
         uncheck_all.triggered.connect(self.uncheck(self.filterSchoolMenu))
         check_all.triggered.connect(self.check(self.filterSchoolMenu))
         self.filterSchoolMenu.addSeparator()
@@ -900,10 +900,10 @@ class SpellBookWindow(QtGui.QMainWindow):
             self.config = cd.getConfig()
             if self.config["backend"] == "HTML" and self.config["backend"] != oldbackend:
                 self.pdffilename = None
-                self.exportBookAction.setText("&Export to HTML...")
+                self.exportBookAction.setText(self.tr("&Export to HTML..."))
             elif oldbackend == "HTML" and self.config["backend"] != oldbackend:
                 self.pdffilename = None
-                self.exportBookAction.setText("&Export to PDF...")
+                self.exportBookAction.setText(self.tr("&Export to PDF..."))
             with open(self.configfile, 'w') as f:
                 json.dump(self.config, f, indent=2)
 
@@ -913,13 +913,13 @@ class SpellBookWindow(QtGui.QMainWindow):
             directory = os.path.dirname(self.filename)
         if self.isModified():
             msgBox = QtGui.QMessageBox()
-            msgBox.setText("The spellbook has been modified.")
-            msgBox.setInformativeText("Do you want to save your changes?")
+            msgBox.setText(self.tr("The spellbook has been modified."))
+            msgBox.setInformativeText(self.tr("Do you want to save your changes?"))
             msgBox.setStandardButtons(QtGui.QMessageBox.Yes | QtGui.QMessageBox.No | QtGui.QMessageBox.Cancel)
             msgBox.setDefaultButton(QtGui.QMessageBox.Yes)
             ret = msgBox.exec_()
             if ret == QtGui.QMessageBox.No:
-                filename, filters = QtGui.QFileDialog.getOpenFileName(self, dir=directory, filter="Spellbooks (*.book);;All Files (*)")
+                filename, filters = QtGui.QFileDialog.getOpenFileName(self, dir=directory, filter=self.tr("Spellbooks (*.book);;All Files (*)"))
                 if filename:
                     SpellBookHandler.open(filename, self)
                     self.modified = False
@@ -931,7 +931,7 @@ class SpellBookWindow(QtGui.QMainWindow):
             elif ret == QtGui.QMessageBox.Yes:
                 self.saveBook()
         else:
-            filename, filters = QtGui.QFileDialog.getOpenFileName(self, dir=directory, filter="Spellbooks (*.book);;All Files (*)")
+            filename, filters = QtGui.QFileDialog.getOpenFileName(self, dir=directory, filter=self.tr("Spellbooks (*.book);;All Files (*)"))
             if filename:
                 SpellBookHandler.open(filename, self)
                 self.modified = False
@@ -945,7 +945,7 @@ class SpellBookWindow(QtGui.QMainWindow):
         directory = os.path.expanduser("~")
         if self.filename:
             directory = os.path.dirname(self.filename)
-        filename, filters = QtGui.QFileDialog.getSaveFileName(self, dir=directory, filter="Spellbooks (*.book);;All Files (*)")
+        filename, filters = QtGui.QFileDialog.getSaveFileName(self, dir=directory, filter=self.tr("Spellbooks (*.book);;All Files (*)"))
         if filename:
             SpellBookHandler.save(filename, self)
             self.modified = False
@@ -959,7 +959,7 @@ class SpellBookWindow(QtGui.QMainWindow):
         if self.filename:
             filename = self.filename
         else:
-            filename, filters = QtGui.QFileDialog.getSaveFileName(self, dir=os.path.expanduser("~"), filter="Spellbooks (*.book);;All Files (*)")
+            filename, filters = QtGui.QFileDialog.getSaveFileName(self, dir=os.path.expanduser("~"), filter=self.tr("Spellbooks (*.book);;All Files (*)"))
         if filename:
             SpellBookHandler.save(filename, self)
             self.modified = False
@@ -976,20 +976,20 @@ class SpellBookWindow(QtGui.QMainWindow):
             self.exportAsBook()
 
     def exportAsBook(self):
-        ffilter="PDF Files (*.pdf);;All Files (*)"
+        ffilter=self.tr("PDF Files (*.pdf);;All Files (*)")
         if self.config["backend"] == "HTML":
-            ffilter="HTML Files (*.html);;All Files (*)"
+            ffilter=self.tr("HTML Files (*.html);;All Files (*)")
         directory = os.path.expanduser("~")
         if self.pdffilename:
             directory = os.path.dirname(self.pdffilename)
         filename, filters = QtGui.QFileDialog.getSaveFileName(self, dir=directory, filter=ffilter)
         if filename:
             self.pdffilename = filename
-            self.exportBookAction.setText("Export to %s" % os.path.basename(self.pdffilename))
+            self.exportBookAction.setText(self.tr("Export to %s") % os.path.basename(self.pdffilename))
             try:
                 self.generateBook(filename)
                 if self.config["backend"] != "HTML":
-                    ans = QtGui.QMessageBox.question(self, "Open book", "Open pdf in external viewer?", QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+                    ans = QtGui.QMessageBox.question(self, self.tr("Open book"), self.tr("Open pdf in external viewer?"), QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
                     if ans == QtGui.QMessageBox.Yes:
                         if sys.platform == "win32":
                             os.startfile(self.pdffilename)
@@ -998,7 +998,7 @@ class SpellBookWindow(QtGui.QMainWindow):
                         else:
                             subprocess.call(["xdg-open", self.pdffilename])
             except TypeError:
-                QtGui.QMessageBox.warning(self, "Something went wrong", "Could not create %s, please check export settings." % filename)
+                QtGui.QMessageBox.warning(self, self.tr("Something went wrong"), self.tr("Could not create %s, please check export settings.") % filename)
 
 
     def generateBook(self, filename):

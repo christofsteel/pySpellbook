@@ -39,7 +39,7 @@ class DownloadWithProgress:
                     f.close()
                 self.finished(self.content)
             except OSError:
-                QtGui.QMessageBox.critical(self.parent, "Network Error","An error occured downloading.")
+                QtGui.QMessageBox.critical(self.parent, self.parent.tr("Network Error"),self.parent.tr("An error occured downloading."))
 
     def cancelDownload(self):
         self.cancel = True
@@ -48,7 +48,7 @@ class DownloadWithProgress:
             self.canceled()
 
     def download(self):
-        self.pd = QtGui.QProgressDialog(self.text, "Abort", 0 ,100, self.parent)
+        self.pd = QtGui.QProgressDialog(self.text, self.parent.tr("Abort"), 0 ,100, self.parent)
         self.pd.setWindowModality(QtCore.Qt.WindowModal)
         self.pd.canceled.connect(self.cancelDownload)
         request = QtNetwork.QNetworkRequest()
@@ -80,8 +80,8 @@ class DownloadWithProgress:
     def sslErrors(self, errors):
         errorString = ", ".join([str(error.errorString()) for error in errors])
 
-        ret = QtGui.QMessageBox.warning(self, "HTTP Example",
-                "One or more SSL errors has occurred: %s" % errorString,
+        ret = QtGui.QMessageBox.warning(self, self.parent.tr("Error"),
+                self.parent.tr("One or more SSL errors has occurred: %s") % errorString,
                 QtGui.QMessageBox.Ignore | QtGui.QMessageBox.Abort)
 
         if ret == QtGui.QMessageBox.Ignore:
@@ -93,7 +93,7 @@ class Wizard(QtGui.QWizard):
         page = QtGui.QWizardPage()
         page.setTitle("PySpellbook")
 
-        label = QtGui.QLabel("It seems you are running PySpellbook for the first time. Please allow this wizard to help you setting everything up.")
+        label = QtGui.QLabel(self.tr("It seems you are running PySpellbook for the first time. Please allow this wizard to help you setting everything up."))
         label.setWordWrap(True)
 
         layout = QtGui.QVBoxLayout()
@@ -130,7 +130,7 @@ class Wizard(QtGui.QWizard):
                     os.removedirs(tempdir)
 
                 def finished(content):
-                    statusLabel.setText("Extracting...")
+                    statusLabel.setText(self.tr("Extracting..."))
                     dirs = AppDirs("pySpellbook")
                     datadir = dirs.user_data_dir
                     if filename.endswith("zip"):
@@ -144,15 +144,15 @@ class Wizard(QtGui.QWizard):
                         tf.close()
                         self.parent().config["prince_path"] = os.path.join(datadir, filename.replace(".tar.gz", ""), "lib/prince/bin/prince")
                     self.parent().config["backend"] = "prince"
-                    QtGui.QMessageBox.information(parent, "Success","Successfully installed PrinceXML to %s." % datadir)
+                    QtGui.QMessageBox.information(parent, self.tr("Success"), self.tr("Successfully installed PrinceXML to %s.") % datadir)
                     statusLabel.setText("")
                     os.remove(os.path.join(tempdir,filename))
                     os.removedirs(tempdir)
                     with open(self.parent().configfile,'w') as f:
                         json.dump(self.parent().config, f, indent=2)
 
-                statusLabel.setText("Downloading...")
-                dl = DownloadWithProgress(parent, "http://www.princexml.com/download/%s" % filename, tempdir, finished, canceled, error, "Downloading PrinceXML")
+                statusLabel.setText(self.tr("Downloading..."))
+                dl = DownloadWithProgress(parent, "http://www.princexml.com/download/%s" % filename, tempdir, finished, canceled, error, self.tr("Downloading PrinceXML"))
                 dl.download()
 
             return download
@@ -160,19 +160,19 @@ class Wizard(QtGui.QWizard):
         page = QtGui.QWizardPage()
         def warn():
             if not self.parent().config["backend"] == "prince":
-                QtGui.QMessageBox.information(page, "Prince","You can always download PrinceXML manually and set the path in the program settings, or just use another backend.")
+                QtGui.QMessageBox.information(page, "Prince", self.tr("You can always download PrinceXML manually and set the path in the program settings, or just use another backend."))
             return True
 
         page.validatePage = warn
         page.setTitle("PySpellbook")
-        page.setSubTitle("Please download a copy of PrinceXML")
+        page.setSubTitle(self.tr("Please download a copy of PrinceXML"))
 
-        label1 = QtGui.QLabel("<p>PySpellbook uses PrinceXML to generate PDF files.</p><p>Unfortunately PrinceXML is not free software, but it is free for personal usage.</p> <p>Installing PrinceXML is not required, but recommended. </p> <p>By downloading you agree to the <a href=\"http://www.princexml.com/license/\">license agreement</a> of PrinceXML (<a href=\"http://www.princexml.com\">www.princexml.com</a>)</p>")
+        label1 = QtGui.QLabel(self.tr("<p>PySpellbook uses PrinceXML to generate PDF files.</p><p>Unfortunately PrinceXML is not free software, but it is free for personal usage.</p> <p>Installing PrinceXML is not required, but recommended. </p> <p>By downloading you agree to the <a href=\"http://www.princexml.com/license/\">license agreement</a> of PrinceXML (<a href=\"http://www.princexml.com\">www.princexml.com</a>)</p>"))
         label1.setOpenExternalLinks(True)
         label1.setWordWrap(True)
-        button = QtGui.QPushButton("Download")
+        button = QtGui.QPushButton(self.tr("Download"))
         label = QtGui.QLabel("")
-        label2 = QtGui.QLabel("Alternatively you can install PrinceXML manually and set the correct path in the configure options.")
+        label2 = QtGui.QLabel(self.tr("Alternatively you can install PrinceXML manually and set the correct path in the configure options."))
         label2.setWordWrap(True)
         button.clicked.connect(downloadPrince(page,label))
 
@@ -189,7 +189,7 @@ class Wizard(QtGui.QWizard):
 
         page = QtGui.QWizardPage()
         page.setTitle("PySpellbook")
-        page.setSubTitle("Select datasets to be downloaded")
+        page.setSubTitle(self.tr("Select datasets to be downloaded"))
         ds_list = QtGui.QListWidget()
         label = QtGui.QLabel("")
 
@@ -204,13 +204,13 @@ class Wizard(QtGui.QWizard):
                     ds_list.addItem(qitem)
 
             except urllib.error.URLError:
-                label.setText("Error downloading current releases. Please check your network settings.")
-                QtGui.QMessageBox.critical(page, "Network Error","An error occured downloading.")
+                label.setText(self.tr("Error downloading current releases. Please check your network settings."))
+                QtGui.QMessageBox.critical(page, self.tr("Network Error"), self.tr("An error occured downloading."))
 
         def finished(content):
             spells = json.loads(str(content))
 
-            pd = QtGui.QProgressDialog("Importing Database", "Abort", 0, len(spells), self)
+            pd = QtGui.QProgressDialog(self.tr("Importing Dataset"), self.tr("Abort"), 0, len(spells), self)
             pd.setWindowModality(QtCore.Qt.WindowModal)
             for i, s in enumerate(spells):
                 pd.setValue(i)
@@ -232,15 +232,15 @@ class Wizard(QtGui.QWizard):
                         data = urllib.request.urlopen("http://christofsteel.github.io/pySpellbook/datasets/%s" % item.text())
                         finished(data.readall().decode("utf-8"))
                     except urllib.error.URLError:
-                        QtGui.QMessageBox.critical(page, "Network Error","An error occured downloading %s." % item.text())
+                        QtGui.QMessageBox.critical(page, self.tr("Network Error"),self.tr("An error occured downloading %s.") % item.text())
                         return False
             if not self.parent().db.count_spells():
-                QtGui.QMessageBox.information(page, "Datasets","You can always download Datasets manually from <a href=\"https://christofsteel.github.io/pySpellbook/\">https://christofstel.github.io/pySpellbook</a> and add them through \"Datasets > Import Dataset\", or add spells manually for your homebrew campaign.")
+                QtGui.QMessageBox.information(page, self.tr("Datasets"),self.tr("You can always download Datasets manually from <a href=\"https://christofsteel.github.io/pySpellbook/\">https://christofstel.github.io/pySpellbook</a> and add them through \"Datasets > Import Dataset\", or add spells manually for your homebrew campaign."))
             return True
 
         page.validatePage = download_datasets
         page.initializePage = download_current
-        button = QtGui.QPushButton("Reload")
+        button = QtGui.QPushButton(self.tr("Reload"))
         button.clicked.connect(download_current)
 
         layout = QtGui.QVBoxLayout()
@@ -254,9 +254,9 @@ class Wizard(QtGui.QWizard):
 
     def createConclusionPage(self):
         page = QtGui.QWizardPage()
-        page.setTitle("Conclusion")
+        page.setTitle(self.tr("Conclusion"))
 
-        label = QtGui.QLabel("You have successfully set up PySpellbook. You can always rerun the wizard be selecting \"Run Wizard\" from the file menu.")
+        label = QtGui.QLabel(self.tr("You have successfully set up PySpellbook. You can always rerun the wizard be selecting \"Run Wizard\" from the file menu."))
         label.setWordWrap(True)
 
         layout = QtGui.QVBoxLayout()
