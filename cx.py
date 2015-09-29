@@ -31,7 +31,7 @@ executables = [
 ]
 
 setup(name='pySpellbook',
-      version = '0.8.1',
+      version = '0.9',
       description = 'A PDF spellbook creation utility for d20 games in python',
       author = 'Christoph Stahl',
       options = dict(build_exe = buildOptions, build_msi = bdist_msi_options,
