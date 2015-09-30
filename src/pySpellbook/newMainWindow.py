@@ -521,7 +521,7 @@ class SpellBookWindow(QtGui.QMainWindow):
 
 
     def clearDB(self):
-        ret = QtGui.QMessageBox().critical(self, self.tr("Are you sure"), self.tr("This will delete all spells in your database close your spellbook without saving. Continue?"), buttons=QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
+        ret = QtGui.QMessageBox().critical(self, self.tr("Are you sure"), self.tr("This will delete all spells in your database and close your spellbook without saving. Continue?"), buttons=QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
         if ret == QtGui.QMessageBox.Yes:
             self.db.clear()
             self.reloadModel()

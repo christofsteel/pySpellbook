@@ -402,7 +402,7 @@
     <message>
         <location filename="../newMainWindow.py" line="524"/>
         <source>This will delete all spells in your database close your spellbook without saving. Continue?</source>
-        <translation>Dies wird alle Zaubersprüche in der Datenbank löschen und das Zauberbuch ohne zu speichern beenden. Fortfahren?</translation>
+        <translation type="obsolete">Dies wird alle Zaubersprüche in der Datenbank löschen und das Zauberbuch ohne zu speichern beenden. Fortfahren?</translation>
     </message>
     <message>
         <location filename="../newMainWindow.py" line="537"/>
@@ -509,6 +509,11 @@
         <source>Could not create %s, please check export settings.</source>
         <translation>Konnte %s nicht erstellen, bitte überprüfe die Exporteinstellungen.</translation>
     </message>
+    <message>
+        <location filename="../newMainWindow.py" line="524"/>
+        <source>This will delete all spells in your database and close your spellbook without saving. Continue?</source>
+        <translation>Dies wird alle Zaubersprüche in der Datenbank löschen und das Zauberbuch ohne zu speichern beenden. Fortfahren?</translation>
+    </message>
 </context>
 <context>
     <name>Wizard</name>
@@ -555,7 +560,7 @@
     <message>
         <location filename="../firstRunWizard.py" line="170"/>
         <source>&lt;p&gt;PySpellbook uses PrinceXML to generate PDF files.&lt;/p&gt;&lt;p&gt;Unfortunately PrinceXML is not free software, but it is free for personal usage.&lt;/p&gt; &lt;p&gt;Installing PrinceXML is not required, but recommended. &lt;/p&gt; &lt;p&gt;By downloading you agree to the &lt;a href=&quot;http://www.princexml.com/license/&quot;&gt;license agreement&lt;/a&gt; of PrinceXML (&lt;a href=&quot;http://www.princexml.com&quot;&gt;www.princexml.com&lt;/a&gt;)&lt;/p&gt;</source>
-        <translation>&lt;p&gt;PySpellbook nutzt PrinceXML, um PDF-Dateien zu generieren.&lt;/p&gt;&lt;p&gt;Leider ist PrinceXML nicht freie Software, sondern nur kostenlos für den persönlichen Gebrauch.&lt;/p&gt;PrinceXML zu installieren kein Zwang, es ist jedoch empfohlen.&lt;/p&gt;&lt;p&gt;Durch das herunterladen stimmst du den &lt;a href=&quot;http://www.princexml.com/license/&quot;&gt;Lizenzbedingungen&lt;/a&gt; von PrinceXML (&lt;a href=&quot;http://www.princexml.com&quot;&gt;www.princexml.com&lt;/a&gt;) zu.&lt;/p&gt;</translation>
+        <translation type="obsolete">&lt;p&gt;PySpellbook nutzt PrinceXML, um PDF-Dateien zu generieren.&lt;/p&gt;&lt;p&gt;Leider ist PrinceXML nicht freie Software, sondern nur kostenlos für den persönlichen Gebrauch.&lt;/p&gt;PrinceXML zu installieren kein Zwang, es ist jedoch empfohlen.&lt;/p&gt;&lt;p&gt;Durch das herunterladen stimmst du den &lt;a href=&quot;http://www.princexml.com/license/&quot;&gt;Lizenzbedingungen&lt;/a&gt; von PrinceXML (&lt;a href=&quot;http://www.princexml.com&quot;&gt;www.princexml.com&lt;/a&gt;) zu.&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../firstRunWizard.py" line="173"/>
@@ -626,6 +631,11 @@
         <location filename="../firstRunWizard.py" line="259"/>
         <source>You have successfully set up PySpellbook. You can always rerun the wizard be selecting &quot;Run Wizard&quot; from the file menu.</source>
         <translation>PySpellbook wurde erfolgreich eingerichtet. Du kannst jederzeit den Assistenten durch die Aktion &quot;Starte Assistent&quot; aus dem &quot;Datei&quot; Menü neu starten.</translation>
+    </message>
+    <message>
+        <location filename="../firstRunWizard.py" line="170"/>
+        <source>&lt;p&gt;PySpellbook uses PrinceXML to generate PDF files. Unfortunately PrinceXML is not free software, but it is free for personal usage.&lt;/p&gt; &lt;p&gt;Installing PrinceXML is not required, but recommended. By downloading you agree to the &lt;a href=&quot;http://www.princexml.com/license/&quot;&gt;license agreement&lt;/a&gt; of PrinceXML (&lt;a href=&quot;http://www.princexml.com&quot;&gt;www.princexml.com&lt;/a&gt;)&lt;/p&gt;</source>
+        <translation>&lt;p&gt;PySpellbook nutzt PrinceXML, um PDF-Dateien zu generieren. Leider ist PrinceXML nicht freie Software, sondern nur kostenlos für den persönlichen Gebrauch.&lt;/p&gt;PrinceXML zu installieren kein Zwang, es ist jedoch empfohlen. Durch das herunterladen stimmst du den &lt;a href=&quot;http://www.princexml.com/license/&quot;&gt;Lizenzbedingungen&lt;/a&gt; von PrinceXML (&lt;a href=&quot;http://www.princexml.com&quot;&gt;www.princexml.com&lt;/a&gt;) zu.&lt;/p&gt;</translation>
     </message>
 </context>
 <context>

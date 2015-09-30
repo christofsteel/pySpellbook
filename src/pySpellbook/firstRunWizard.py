@@ -167,7 +167,7 @@ class Wizard(QtGui.QWizard):
         page.setTitle("PySpellbook")
         page.setSubTitle(self.tr("Please download a copy of PrinceXML"))
 
-        label1 = QtGui.QLabel(self.tr("<p>PySpellbook uses PrinceXML to generate PDF files.</p><p>Unfortunately PrinceXML is not free software, but it is free for personal usage.</p> <p>Installing PrinceXML is not required, but recommended. </p> <p>By downloading you agree to the <a href=\"http://www.princexml.com/license/\">license agreement</a> of PrinceXML (<a href=\"http://www.princexml.com\">www.princexml.com</a>)</p>"))
+        label1 = QtGui.QLabel(self.tr("<p>PySpellbook uses PrinceXML to generate PDF files. Unfortunately PrinceXML is not free software, but it is free for personal usage.</p> <p>Installing PrinceXML is not required, but recommended. By downloading you agree to the <a href=\"http://www.princexml.com/license/\">license agreement</a> of PrinceXML (<a href=\"http://www.princexml.com\">www.princexml.com</a>)</p>"))
         label1.setOpenExternalLinks(True)
         label1.setWordWrap(True)
         button = QtGui.QPushButton(self.tr("Download"))
