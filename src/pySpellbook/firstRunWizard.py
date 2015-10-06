@@ -196,7 +196,7 @@ class Wizard(QtGui.QWizard):
         def download_current():
             try:
                 current = urllib.request.urlopen("http://christofsteel.github.io/pySpellbook/datasets/current.json")
-                current_json = json.loads(current.readall().decode("utf-8"))
+                current_json = json.loads(current.read().decode("utf-8"))
                 ds_list.clear()
                 for item in sorted(current_json.keys()):
                     qitem = QtGui.QListWidgetItem("%s-%s.json" % (item, current_json[item]))
@@ -230,7 +230,7 @@ class Wizard(QtGui.QWizard):
                 if item.checkState():
                     try:
                         data = urllib.request.urlopen("http://christofsteel.github.io/pySpellbook/datasets/%s" % item.text())
-                        finished(data.readall().decode("utf-8"))
+                        finished(data.read().decode("utf-8"))
                     except urllib.error.URLError:
                         QtGui.QMessageBox.critical(page, self.tr("Network Error"),self.tr("An error occured downloading %s.") % item.text())
                         return False
