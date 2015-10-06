@@ -15,12 +15,13 @@
 	margin-bottom: 3cm;
 	margin-left: 2cm;
 	margin-right: 2cm;
+	background-color: white;
 }
 
 @page :first{
 	@bottom-center {
 	}
-	background: none;
+	background-image: none;
 }
 @page {
 	@bottom-center{
