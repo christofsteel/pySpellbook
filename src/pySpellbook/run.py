@@ -7,7 +7,7 @@ from PySide import QtGui, QtCore
 from pySpellbook.db import db
 from pySpellbook.newMainWindow import SpellBookWindow
 
-VERSION="0.9"
+VERSION="0.9.0.1"
 def find_data_file(filename):
     if getattr(sys, 'frozen', False):
         # The application is frozen
